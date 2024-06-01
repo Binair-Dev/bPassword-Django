@@ -1,0 +1,36 @@
+{% extends 'base.html' %}
+{% block title %}Connexion{% endblock %}
+{% block head%}{% endblock %}
+{% block content %}
+<div class="container text-center" style="padding-top: 100px;">
+    <h1>Modifier</h1>
+    <form method="post">
+        {% csrf_token %}
+        <div class="form-group">
+            <label class="control-label">Nom</label>
+            <input type="text" id="name" name="name" class="form-control" placeholder="name" value="{{ credential.name }}">
+        </div>
+        <div class="form-group">
+            <label class="control-label">Nom d'utilisateur</label>
+            <input type="text" id="username" name="username" class="form-control" placeholder="username" value="{{ credential.username }}">
+        </div>
+        <div class="form-group">
+            <label class="control-label">Mot de passe</label>
+            <input type="password" id="password" name="password" class="form-control" placeholder="password" value="{{ credential.password }}">
+        </div>
+        <button type="submit" class="btn btn-primary">Mettre à jour</button>
+    </form>
+    <div class="mt-3">
+        <form id="delete-form" action="{% url 'delete' credential.id %}" method="post" onsubmit="return confirmDelete()">
+            {% csrf_token %}
+            <button type="submit" class="btn btn-danger">Supprimer</button>
+        </form>
+    </div>
+</div>
+
+<script>
+    function confirmDelete() {
+        return confirm("Êtes-vous sûr de vouloir supprimer cet identifiant ?");
+    }
+</script>
+{% endblock %}

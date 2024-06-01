@@ -1,0 +1,7 @@
+django
+djangorestframework
+psycopg2-binary
+requests
+PySocks
+beautifulsoup4
+dj_database_url

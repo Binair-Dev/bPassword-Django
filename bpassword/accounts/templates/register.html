@@ -1,0 +1,25 @@
+{% extends 'base.html' %}
+{% block title %}S'enregistrer{% endblock %}
+{% block head%}{% endblock %}
+{% block content %}
+  <div class="container text-center" style="padding-top: 100px;">
+    <h1>S'enregistrer</h1>
+    <form method="post">
+      {% csrf_token %}
+      {% if error %}<p class="text-danger">{{ error }}</p>{% endif %}
+      <div class="form-group">
+        <label class="control-label">Nom d'utilisateur</label>
+        <input type="text" id="username" name="username" class="form-control" placeholder="username">
+      </div>
+      <div class="form-group">
+        <label class="control-label">Mot de passe</label>
+        <input type="password" id="password" name="password" class="form-control" placeholder="password">
+      </div>
+      <div class="form-group">
+        <label class="control-label">Confirmation du mot de passe</label>
+        <input type="password" id="password_confirm" name="password_confirm" class="form-control" placeholder="password_confirm">
+      </div>
+      <button type="submit" class="btn btn-primary">S'enregistrer</button>
+    </form>
+  </div>
+{% endblock %}
