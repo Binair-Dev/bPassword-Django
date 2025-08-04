@@ -15,11 +15,6 @@ services:
       # Base de données SQLite uniquement
       DATABASE_URL: sqlite:////app/data/db.sqlite3
       
-      # Superutilisateur par défaut
-      DJANGO_SUPERUSER_USERNAME: admin
-      DJANGO_SUPERUSER_EMAIL: admin@bpassword.local
-      DJANGO_SUPERUSER_PASSWORD: admin123
-      
       # Sécurité
       DJANGO_SETTINGS_MODULE: bpassword.settings
     ports:

@@ -50,7 +50,7 @@ python ../reset_database.py
 2. **Confirmation** de l'utilisateur (sécurité)
 3. **Suppression** de `passwords_credentials`
 4. **Suppression** de `auth_user`
-5. **Création** optionnelle nouveau superutilisateur
+5. **Base vide** - aucun utilisateur créé
 
 ### Données supprimées :
 - 🗑️ **Tous les identifiants sauvegardés**
@@ -61,6 +61,11 @@ python ../reset_database.py
 - ✅ **Structure des tables** (migrations)
 - ✅ **Configuration Django**
 - ✅ **Fichiers de l'application**
+
+### Résultat final :
+- 🔒 **Base de données COMPLÈTEMENT VIDE**
+- 👤 **Aucun utilisateur créé automatiquement**
+- 📝 **Inscription requise** pour créer des comptes
 
 ## ⚠️ **Sécurité**
 
@@ -73,19 +78,17 @@ python ../reset_database.py
 - 💾 **AUCUNE sauvegarde automatique**
 - 🗑️ **PERTE DÉFINITIVE** des données
 
-## 👤 **Nouveau Superutilisateur**
+## 👤 **Après Nettoyage**
 
-Créé automatiquement après nettoyage :
-```
-Username: admin
-Email: admin@bpassword.local
-Password: admin123
-```
+**Aucun utilisateur créé automatiquement !**
+- 🔒 Base de données complètement vide
+- 📝 Utilisation de l'interface d'inscription obligatoire
+- 🆕 Création manuelle des premiers comptes
 
 **Accès après nettoyage :**
 - 🌐 Interface: http://localhost:8150 (ou votre IP)
-- 👨‍💼 Admin: http://localhost:8150/admin
-- 🔑 Connexion: admin / admin123
+- 📝 Page d'inscription: http://localhost:8150/accounts/register/
+- 🔑 Créez votre premier compte via l'interface
 
 ## 🔍 **Vérifications**
 
@@ -125,10 +128,10 @@ docker-compose -f docker-compose.simple.yml logs web
 ## ✅ **Résultat Final**
 
 Après nettoyage réussi :
-- 🔐 Base de données vierge
-- 👤 Superutilisateur admin/admin123 créé
-- 🌐 Application accessible immédiatement
+- 🔐 Base de données complètement vierge
+- 👤 Aucun utilisateur dans la base
+- 📝 Interface d'inscription disponible
 - 📊 0 identifiants stockés
-- 👥 1 utilisateur admin uniquement
+- 👥 0 utilisateur - base totalement vide
 
 **La base de données est maintenant propre et prête à l'emploi !** 🎯

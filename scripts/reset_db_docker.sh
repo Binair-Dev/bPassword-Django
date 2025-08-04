@@ -122,19 +122,9 @@ case $confirmation in
         reset_tables
         
         echo ""
-        read -p "💡 Créer un nouveau superutilisateur ? (oui/non): " create_user
-        case $create_user in
-            oui|OUI|o|O|yes|YES|y|Y)
-                create_superuser
-                ;;
-            *)
-                echo "ℹ️  Vous pourrez créer un superutilisateur plus tard avec:"
-                echo "   docker-compose -f $COMPOSE_FILE exec web python manage.py createsuperuser"
-                ;;
-        esac
-        
-        echo ""
         echo "✅ Nettoyage terminé !"
+        echo "💡 Base de données complètement vide - aucun utilisateur créé"
+        echo "📝 Utilisez l'interface d'inscription pour créer de nouveaux comptes"
         echo "🌐 Accédez à l'application: http://localhost:8150"
         ;;
     *)

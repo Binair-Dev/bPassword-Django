@@ -34,21 +34,17 @@ if [[ "$DEBUG" == "False" ]]; then
     python manage.py collectstatic --noinput
 fi
 
-# Créer un superutilisateur par défaut si aucun n'existe
-echo "👤 Vérification du superutilisateur..."
+# Vérifier les utilisateurs existants (sans en créer)
+echo "👤 Vérification des utilisateurs..."
 python manage.py shell << EOF
 from django.contrib.auth.models import User
-import os
 
-username = os.getenv('DJANGO_SUPERUSER_USERNAME', 'admin')
-email = os.getenv('DJANGO_SUPERUSER_EMAIL', 'admin@bpassword.local')
-password = os.getenv('DJANGO_SUPERUSER_PASSWORD', 'admin123')
-
-if not User.objects.filter(username=username).exists():
-    User.objects.create_superuser(username=username, email=email, password=password)
-    print(f"✅ Superutilisateur créé: {username}")
+user_count = User.objects.count()
+if user_count == 0:
+    print("ℹ️  Aucun utilisateur dans la base de données")
+    print("📝 Utilisez l'interface d'inscription pour créer des comptes")
 else:
-    print(f"ℹ️  Superutilisateur existe déjà: {username}")
+    print(f"ℹ️  {user_count} utilisateur(s) trouvé(s) dans la base")
 EOF
 
 echo "🚀 bPassword est prêt!"

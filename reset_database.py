@@ -85,10 +85,8 @@ if __name__ == "__main__":
     print("=" * 50)
     
     # Nettoyer la base de données
-    if reset_database():
-        # Proposer de créer un nouveau superutilisateur
-        create_new = input("\n💡 Créer un nouveau superutilisateur ? (oui/non): ")
-        if create_new.lower() in ['oui', 'o', 'yes', 'y']:
-            create_fresh_superuser()
+    reset_database()
     
     print("\n🎯 Nettoyage terminé !")
+    print("💡 Base de données complètement vide - aucun utilisateur créé")
+    print("📝 Utilisez l'interface d'inscription pour créer de nouveaux comptes")
