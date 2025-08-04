@@ -16,7 +16,7 @@
         </div>
         <div class="form-group">
             <label class="control-label">Mot de passe</label>
-            <input type="password" id="password" name="password" class="form-control" placeholder="password" value="{{ credential.password }}">
+            <input type="password" id="password" name="password" class="form-control" placeholder="password" value="{{ credential.decrypted_password }}">
         </div>
         <button type="submit" class="btn btn-primary">Mettre à jour</button>
     </form>

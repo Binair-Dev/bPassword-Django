@@ -1,0 +1,70 @@
+# Fichiers et dossiers à ignorer lors de la construction Docker
+
+# Environnement virtuel Python
+venv/
+env/
+.venv/
+
+# Cache Python
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+.Python
+pip-log.txt
+pip-delete-this-directory.txt
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Git
+.git/
+.gitignore
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# Logs
+*.log
+logs/
+
+# Base de données locale (sera montée en volume)
+*.sqlite3
+
+# Sauvegardes
+backups/
+*.backup
+*.dump
+
+# Fichiers temporaires
+tmp/
+temp/
+.tmp/
+
+# Variables d'environnement
+.env
+.env.local
+.env.*.local
+
+# Node modules (si utilisé)
+node_modules/
+npm-debug.log*
+
+# Documentation
+README.md
+*.md
+docs/
+
+# Scripts de développement
+start.sh
+create_superuser.py

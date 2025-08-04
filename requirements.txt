@@ -5,3 +5,5 @@ requests
 PySocks
 beautifulsoup4
 dj_database_url
+cryptography
+python-dotenv

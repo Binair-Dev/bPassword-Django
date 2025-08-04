@@ -1,0 +1,118 @@
+version: '3.8'
+
+services:
+  # Base de données PostgreSQL (optionnelle - peut utiliser SQLite)
+  postgres:
+    image: postgres:15-alpine
+    container_name: bpassword_postgres
+    environment:
+      POSTGRES_DB: bpassword
+      POSTGRES_USER: bpassword_user
+      POSTGRES_PASSWORD: bpassword_secure_password_2024
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+      - ./backups:/backups
+    networks:
+      - bpassword_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U bpassword_user -d bpassword"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  # Application Django bPassword
+  web:
+    build: .
+    container_name: bpassword_web
+    environment:
+      # Configuration Django
+      SECRET_KEY: django-super-secret-key-for-production-change-this-2024-secure
+      DEBUG: "False"
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web
+      
+      # Base de données - PostgreSQL
+      DATABASE_URL: postgres://bpassword_user:bpassword_secure_password_2024@postgres:5432/bpassword
+      
+      # Base de données - SQLite (alternative)
+      # DATABASE_URL: sqlite:///db.sqlite3
+      
+      # Sécurité
+      DJANGO_SETTINGS_MODULE: bpassword.settings
+    ports:
+      - "8150:8000"
+    volumes:
+      - ./bpassword/db.sqlite3:/app/bpassword/db.sqlite3
+      - ./backups:/app/backups
+      - static_volume:/app/static
+      - media_volume:/app/media
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - bpassword_network
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/accounts/login/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+  # Service Nginx (proxy inverse - optionnel pour production)
+  nginx:
+    image: nginx:alpine
+    container_name: bpassword_nginx
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx/ssl:/etc/nginx/ssl:ro
+      - static_volume:/static:ro
+      - media_volume:/media:ro
+    depends_on:
+      - web
+    networks:
+      - bpassword_network
+    restart: unless-stopped
+    profiles:
+      - production
+
+  # Service de sauvegarde automatique
+  backup:
+    image: postgres:15-alpine
+    container_name: bpassword_backup
+    environment:
+      POSTGRES_DB: bpassword
+      POSTGRES_USER: bpassword_user
+      POSTGRES_PASSWORD: bpassword_secure_password_2024
+    volumes:
+      - ./backups:/backups
+      - ./scripts/backup.sh:/backup.sh:ro
+    depends_on:
+      - postgres
+    networks:
+      - bpassword_network
+    restart: "no"
+    profiles:
+      - backup
+    command: >
+      sh -c "
+        echo 'Service de sauvegarde configuré'
+        # Exécuter la sauvegarde via cron ou manuellement
+        # 0 2 * * * /backup.sh
+        tail -f /dev/null
+      "
+
+volumes:
+  postgres_data:
+    driver: local
+  static_volume:
+    driver: local
+  media_volume:
+    driver: local
+
+networks:
+  bpassword_network:
+    driver: bridge
