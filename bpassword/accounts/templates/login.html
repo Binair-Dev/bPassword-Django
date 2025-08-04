@@ -29,8 +29,10 @@
       <button type="submit" class="btn btn-primary">Connexion</button>
     </form>
     
+    {% if not users_exist %}
     <p class="text-center mt-3">
       <a href="{% url 'register' %}">Créer un compte</a>
     </p>
+    {% endif %}
   </div>
 {% endblock %}

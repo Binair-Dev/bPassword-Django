@@ -25,12 +25,19 @@ def login_view(request):
         else:
             messages.error(request, 'Veuillez remplir tous les champs.')
     
-    return render(request, 'login.html')
+    # Vérifier si des utilisateurs existent pour afficher le lien d'inscription
+    users_exist = User.objects.exists()
+    return render(request, 'login.html', {'users_exist': users_exist})
 
 @csrf_protect
 def register_view(request):
     if request.user.is_authenticated:
         return redirect('passwords')
+    
+    # Bloquer les inscriptions si un utilisateur existe déjà
+    if User.objects.exists():
+        messages.error(request, 'Les inscriptions sont fermées. Un utilisateur est déjà enregistré.')
+        return redirect('login')
     
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
