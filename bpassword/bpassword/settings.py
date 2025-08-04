@@ -18,7 +18,7 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-o7!tlppl)p0ubgjjm$yydh!)uo
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
-ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,*').split(',')
+ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,bpassword.b-services.be,*').split(',')
 
 # Application definition
 
@@ -142,6 +142,11 @@ SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 CSRF_COOKIE_SECURE = not DEBUG  # HTTPS requis en production
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Strict'  # Sécurisé
+CSRF_TRUSTED_ORIGINS = [
+    'https://bpassword.b-services.be',
+    'https://localhost:8001',
+    'https://127.0.0.1:8001',
+]
 
 # Redirections après connexion/déconnexion
 LOGIN_URL = '/accounts/login/'
