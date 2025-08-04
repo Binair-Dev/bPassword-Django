@@ -13,6 +13,7 @@ show_help() {
     echo "Options:"
     echo "  dev        Démarrer en mode développement (SQLite)"
     echo "  prod       Démarrer en mode production (PostgreSQL + Nginx)"
+    echo "  simple     Démarrer en mode simple (SQLite, sans PostgreSQL)"
     echo "  build      Construire les images Docker"
     echo "  stop       Arrêter tous les services"
     echo "  logs       Afficher les logs"
@@ -23,6 +24,7 @@ show_help() {
     echo ""
     echo "Exemples:"
     echo "  $0 dev     # Démarrage rapide pour le développement"
+    echo "  $0 simple  # Démarrage simple sans PostgreSQL"
     echo "  $0 prod    # Démarrage production complète"
     echo "  $0 backup  # Sauvegarder les données"
 }
@@ -52,6 +54,19 @@ start_dev() {
     echo "Pour voir les logs: docker-compose -f docker-compose.dev.yml logs -f"
 }
 
+# Mode simple (SQLite, sans PostgreSQL)
+start_simple() {
+    echo "🚀 Démarrage en mode simple (SQLite uniquement)..."
+    docker-compose -f docker-compose.simple.yml up --build -d
+    echo ""
+    echo "✅ bPassword démarré en mode simple!"
+    echo "📱 Interface: http://localhost:8150"
+    echo "👨‍💼 Admin: http://localhost:8150/admin (admin/admin123)"
+    echo "🗄️  Base de données: SQLite"
+    echo ""
+    echo "Pour voir les logs: docker-compose -f docker-compose.simple.yml logs -f"
+}
+
 # Mode production
 start_prod() {
     echo "🏭 Démarrage en mode production..."
@@ -64,12 +79,13 @@ start_prod() {
         exit 1
     fi
     
-    docker-compose up --build -d postgres web
+    docker-compose up --build -d web
     echo ""
     echo "✅ bPassword démarré en mode production!"
-    echo "📱 Interface: http://localhost:8000"
-    echo "🗄️  Base de données: PostgreSQL"
+    echo "📱 Interface: http://localhost:8150"
+    echo "🗄️  Base de données: SQLite (par défaut)"
     echo ""
+    echo "Pour PostgreSQL: décommenter DATABASE_URL dans docker-compose.yml et redémarrer"
     echo "Pour activer Nginx: docker-compose --profile production up nginx -d"
 }
 
@@ -138,6 +154,9 @@ main() {
     case "${1:-help}" in
         "dev")
             start_dev
+            ;;
+        "simple")
+            start_simple
             ;;
         "prod")
             start_prod

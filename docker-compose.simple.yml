@@ -1,0 +1,44 @@
+version: '3.8'
+
+# Configuration simplifiée sans PostgreSQL
+services:
+  # Application Django bPassword - Mode simple
+  web:
+    build: .
+    container_name: bpassword_web_simple
+    environment:
+      # Configuration Django
+      SECRET_KEY: django-super-secret-key-for-production-change-this-2024-secure
+      DEBUG: "True"
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web
+      
+      # Base de données SQLite uniquement
+      DATABASE_URL: sqlite:///db.sqlite3
+      
+      # Superutilisateur par défaut
+      DJANGO_SUPERUSER_USERNAME: admin
+      DJANGO_SUPERUSER_EMAIL: admin@bpassword.local
+      DJANGO_SUPERUSER_PASSWORD: admin123
+      
+      # Sécurité
+      DJANGO_SETTINGS_MODULE: bpassword.settings
+    ports:
+      - "8150:8000"
+    volumes:
+      - ./bpassword/db.sqlite3:/app/bpassword/db.sqlite3
+      - ./backups:/app/backups
+      - static_volume:/app/static
+      - media_volume:/app/media
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/accounts/login/', timeout=5)"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+volumes:
+  static_volume:
+    driver: local
+  media_volume:
+    driver: local

@@ -9,6 +9,7 @@ services:
       POSTGRES_DB: bpassword
       POSTGRES_USER: bpassword_user
       POSTGRES_PASSWORD: bpassword_secure_password_2024
+      POSTGRES_INITDB_ARGS: "--auth-host=scram-sha-256 --auth-local=scram-sha-256"
     volumes:
       - postgres_data:/var/lib/postgresql/data
       - ./backups:/backups
@@ -16,10 +17,11 @@ services:
       - bpassword_network
     restart: unless-stopped
     healthcheck:
-      test: ["CMD-SHELL", "pg_isready -U bpassword_user -d bpassword"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
+      test: ["CMD-SHELL", "pg_isready -U bpassword_user -d bpassword || exit 1"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   # Application Django bPassword
   web:
@@ -31,11 +33,11 @@ services:
       DEBUG: "False"
       ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web
       
-      # Base de données - PostgreSQL
-      DATABASE_URL: postgres://bpassword_user:bpassword_secure_password_2024@postgres:5432/bpassword
+      # Base de données - SQLite (par défaut, plus simple)
+      DATABASE_URL: sqlite:///db.sqlite3
       
-      # Base de données - SQLite (alternative)
-      # DATABASE_URL: sqlite:///db.sqlite3
+      # Base de données - PostgreSQL (décommenter pour utiliser PostgreSQL)
+      # DATABASE_URL: postgres://bpassword_user:bpassword_secure_password_2024@postgres:5432/bpassword
       
       # Sécurité
       DJANGO_SETTINGS_MODULE: bpassword.settings
@@ -46,9 +48,9 @@ services:
       - ./backups:/app/backups
       - static_volume:/app/static
       - media_volume:/app/media
-    depends_on:
-      postgres:
-        condition: service_healthy
+    # depends_on:
+    #   postgres:
+    #     condition: service_healthy
     networks:
       - bpassword_network
     restart: unless-stopped
