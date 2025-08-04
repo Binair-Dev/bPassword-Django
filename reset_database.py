@@ -32,11 +32,8 @@ def reset_database():
         print("✅ Base de données déjà vide !")
         return
     
-    # Confirmation
-    confirmation = input("\n⚠️  Voulez-vous vraiment supprimer TOUTES les données ? (oui/non): ")
-    if confirmation.lower() not in ['oui', 'o', 'yes', 'y']:
-        print("❌ Nettoyage annulé.")
-        return
+    # Suppression automatique (pas de confirmation interactive)
+    print("\n⚠️  Suppression automatique de TOUTES les données...")
     
     try:
         # Supprimer tous les identifiants
