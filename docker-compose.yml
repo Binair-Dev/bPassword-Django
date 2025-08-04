@@ -31,7 +31,7 @@ services:
       # Configuration Django
       SECRET_KEY: django-super-secret-key-for-production-change-this-2024-secure
       DEBUG: "False"
-      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web,192.168.0.249,*
       
       # Base de données - SQLite (par défaut, plus simple)
       DATABASE_URL: sqlite:////app/data/db.sqlite3

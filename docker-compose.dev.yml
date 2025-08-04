@@ -10,7 +10,7 @@ services:
       # Configuration Django pour développement
       SECRET_KEY: django-dev-secret-key-not-for-production
       DEBUG: "True"
-      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web,192.168.0.249,*
       
       # Base de données SQLite pour simplicité
       DATABASE_URL: sqlite:////app/data/db.sqlite3
