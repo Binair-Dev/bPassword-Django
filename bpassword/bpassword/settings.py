@@ -123,25 +123,25 @@ STATIC_URL = 'static/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Sécurité
-SECURE_SSL_REDIRECT = False  # Désactivé pour HTTP
-SECURE_HSTS_SECONDS = 0  # Pas de HSTS en HTTP
-SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-SECURE_HSTS_PRELOAD = False
+SECURE_SSL_REDIRECT = not DEBUG  # HTTPS activé en production
+SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
+SECURE_HSTS_PRELOAD = not DEBUG
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
-# Session - Compatible HTTP
-SESSION_COOKIE_SECURE = False  # Permet HTTP
+# Session - Sécurisé
+SESSION_COOKIE_SECURE = not DEBUG  # HTTPS requis en production
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Lax'  # Plus flexible pour HTTP
+SESSION_COOKIE_SAMESITE = 'Strict'  # Sécurisé
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 
-# CSRF - Compatible HTTP
-CSRF_COOKIE_SECURE = False  # Permet HTTP
+# CSRF - Sécurisé
+CSRF_COOKIE_SECURE = not DEBUG  # HTTPS requis en production
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Lax'  # Plus flexible pour HTTP
+CSRF_COOKIE_SAMESITE = 'Strict'  # Sécurisé
 
 # Redirections après connexion/déconnexion
 LOGIN_URL = '/accounts/login/'

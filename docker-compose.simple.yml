@@ -18,7 +18,7 @@ services:
       # Sécurité
       DJANGO_SETTINGS_MODULE: bpassword.settings
     ports:
-      - "8150:8000"
+      - "8001:8000"
     volumes:
       - sqlite_data:/app/data  # Volume pour les données persistantes
       - ./backups:/app/backups
