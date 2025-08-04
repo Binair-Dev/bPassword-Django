@@ -44,7 +44,7 @@ services:
     ports:
       - "8150:8000"
     volumes:
-      - ./bpassword/db.sqlite3:/app/bpassword/db.sqlite3
+      - sqlite_data:/app/bpassword  # Monter le dossier, pas le fichier
       - ./backups:/app/backups
       - static_volume:/app/static
       - media_volume:/app/media
@@ -109,6 +109,8 @@ services:
 
 volumes:
   postgres_data:
+    driver: local
+  sqlite_data:
     driver: local
   static_volume:
     driver: local

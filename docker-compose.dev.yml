@@ -24,7 +24,7 @@ services:
     volumes:
       # Montage en développement pour hot-reload
       - .:/app:ro
-      - ./bpassword/db.sqlite3:/app/bpassword/db.sqlite3
+      - sqlite_data:/app/bpassword  # Volume persistant pour SQLite
     restart: unless-stopped
     command: >
       sh -c "
@@ -38,3 +38,7 @@ services:
       timeout: 10s
       retries: 3
       start_period: 20s
+
+volumes:
+  sqlite_data:
+    driver: local

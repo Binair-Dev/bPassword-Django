@@ -25,7 +25,7 @@ services:
     ports:
       - "8150:8000"
     volumes:
-      - ./bpassword/db.sqlite3:/app/bpassword/db.sqlite3
+      - sqlite_data:/app/bpassword  # Monter le dossier complet
       - ./backups:/app/backups
       - static_volume:/app/static
       - media_volume:/app/media
@@ -38,6 +38,8 @@ services:
       start_period: 40s
 
 volumes:
+  sqlite_data:
+    driver: local
   static_volume:
     driver: local
   media_volume:
