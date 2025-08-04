@@ -19,6 +19,7 @@ show_help() {
     echo "  logs       Afficher les logs"
     echo "  backup     Effectuer une sauvegarde"
     echo "  shell      Ouvrir un shell dans le conteneur web"
+    echo "  reset-db   Nettoyer la base de données (SUPPRIME TOUT)"
     echo "  clean      Nettoyer les volumes et images"
     echo "  help       Afficher cette aide"
     echo ""
@@ -131,6 +132,12 @@ open_shell() {
     fi
 }
 
+# Nettoyer la base de données
+reset_database() {
+    echo "🧹 Nettoyage de la base de données bPassword..."
+    ./scripts/reset_db_docker.sh
+}
+
 # Nettoyage
 clean_all() {
     echo "🧹 Nettoyage des volumes et images..."
@@ -175,6 +182,9 @@ main() {
             ;;
         "shell")
             open_shell
+            ;;
+        "reset-db")
+            reset_database
             ;;
         "clean")
             clean_all
