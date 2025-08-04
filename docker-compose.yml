@@ -34,7 +34,7 @@ services:
       ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web
       
       # Base de données - SQLite (par défaut, plus simple)
-      DATABASE_URL: sqlite:///db.sqlite3
+      DATABASE_URL: sqlite:////app/data/db.sqlite3
       
       # Base de données - PostgreSQL (décommenter pour utiliser PostgreSQL)
       # DATABASE_URL: postgres://bpassword_user:bpassword_secure_password_2024@postgres:5432/bpassword
@@ -44,7 +44,7 @@ services:
     ports:
       - "8150:8000"
     volumes:
-      - sqlite_data:/app/bpassword  # Monter le dossier, pas le fichier
+      - sqlite_data:/app/data  # Volume pour les données persistantes
       - ./backups:/app/backups
       - static_volume:/app/static
       - media_volume:/app/media

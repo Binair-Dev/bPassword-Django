@@ -13,8 +13,16 @@ if [[ "$DATABASE_URL" == postgres* ]]; then
     echo "✅ PostgreSQL est prêt!"
 fi
 
+# Créer le dossier data pour SQLite
+mkdir -p /app/data
+
 # Se déplacer dans le répertoire Django
-cd /app/bpassword
+cd /app/bpassword || {
+    echo "❌ Erreur: répertoire /app/bpassword introuvable"
+    echo "Structure disponible:"
+    ls -la /app/
+    exit 1
+}
 
 # Appliquer les migrations
 echo "🗄️  Application des migrations..."

@@ -13,7 +13,7 @@ services:
       ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web
       
       # Base de données SQLite uniquement
-      DATABASE_URL: sqlite:///db.sqlite3
+      DATABASE_URL: sqlite:////app/data/db.sqlite3
       
       # Superutilisateur par défaut
       DJANGO_SUPERUSER_USERNAME: admin
@@ -25,7 +25,7 @@ services:
     ports:
       - "8150:8000"
     volumes:
-      - sqlite_data:/app/bpassword  # Monter le dossier complet
+      - sqlite_data:/app/data  # Volume pour les données persistantes
       - ./backups:/app/backups
       - static_volume:/app/static
       - media_volume:/app/media
