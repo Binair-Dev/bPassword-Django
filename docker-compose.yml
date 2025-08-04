@@ -40,7 +40,7 @@ services:
       # Sécurité
       DJANGO_SETTINGS_MODULE: bpassword.settings
     ports:
-      - "8000:8000"
+      - "8150:8000"
     volumes:
       - ./bpassword/db.sqlite3:/app/bpassword/db.sqlite3
       - ./backups:/app/backups

@@ -37,7 +37,7 @@ CSRF_COOKIE_SAMESITE = 'Lax'
 **Mode production HTTP :**
 ```bash
 ./docker-start.sh prod
-# Interface : http://localhost:8000
+# Interface : http://localhost:8150
 # Avec Nginx : http://localhost:80
 ```
 
@@ -86,8 +86,10 @@ CSRF_COOKIE_SECURE = not DEBUG
 ### 🌍 **Accès Application**
 
 Une fois démarré, accédez à :
-- **Interface principale** : http://localhost:8000
-- **Administration** : http://localhost:8000/admin
+- **Interface principale (dev)** : http://localhost:8000
+- **Interface principale (prod)** : http://localhost:8150  
+- **Administration (dev)** : http://localhost:8000/admin
+- **Administration (prod)** : http://localhost:8150/admin
 - **Comptes par défaut** : admin / admin123 (mode dev)
 
 L'application fonctionne maintenant parfaitement en HTTP ! 🎯
