@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'bpassword.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.parse(
-        os.getenv('DATABASE_URL', f'sqlite:///data/db.sqlite3')
+        os.getenv('DATABASE_URL', 'sqlite:////data/db.sqlite3')
     )
 }
 
