@@ -13,9 +13,20 @@ if [[ "$DATABASE_URL" == postgres* ]]; then
     echo "✅ PostgreSQL est prêt!"
 fi
 
-# Les dossiers sont créés dans le Dockerfile avec les bonnes permissions
+# Vérification et diagnostic des volumes
 echo "📁 Vérification des volumes..."
-ls -la /data /logs /backups 2>/dev/null || echo "⚠️  Volumes non montés correctement"
+ls -la /data /logs /backups
+
+echo "🔍 Test d'écriture dans /data..."
+if touch /data/test.txt 2>/dev/null; then
+    echo "✅ Écriture OK dans /data"
+    rm -f /data/test.txt
+else
+    echo "❌ ERREUR: Impossible d'écrire dans /data"
+    whoami
+    id
+    ls -la /data
+fi
 
 # Se déplacer dans le répertoire Django
 cd /app/bpassword || {
@@ -35,20 +46,31 @@ if [[ "$DEBUG" == "False" ]]; then
     python manage.py collectstatic --noinput
 fi
 
-# Vérifier l'état de la base de données
-echo "💾 Vérification de la base de données..."
-if [ -f "/data/db.sqlite3" ]; then
-    echo "✅ Base de données existante trouvée - conservation des données"
-    # Vérifier les utilisateurs existants
-    python manage.py shell -c "
-from django.contrib.auth.models import User
-user_count = User.objects.count()
-print(f'ℹ️  {user_count} utilisateur(s) dans la base existante')
+# Diagnostic de la configuration Django
+echo "🔧 Variables d'environnement Django:"
+echo "DATABASE_URL = $DATABASE_URL"
+echo "SECRET_KEY = ${SECRET_KEY:0:20}..."
+
+# Test de connexion à la base
+echo "💾 Test de connexion à la base de données..."
+python manage.py shell -c "
+from django.db import connection
+from django.conf import settings
+print('Database engine:', settings.DATABASES['default']['ENGINE'])
+print('Database name:', settings.DATABASES['default']['NAME'])
+try:
+    with connection.cursor() as cursor:
+        cursor.execute('SELECT 1')
+    print('✅ Connexion DB réussie')
+except Exception as e:
+    print('❌ ERREUR DB:', str(e))
+    import os
+    db_path = settings.DATABASES['default']['NAME']
+    print('Chemin DB:', db_path)
+    print('DB exists:', os.path.exists(db_path))
+    print('DB dir exists:', os.path.exists(os.path.dirname(db_path)))
+    print('DB dir perms:', oct(os.stat(os.path.dirname(db_path)).st_mode)[-3:])
 "
-else
-    echo "🆕 Nouvelle installation - base de données sera créée"
-    echo "📝 Utilisez l'interface d'inscription pour créer des comptes"
-fi
 
 echo "🚀 bPassword est prêt!"
 echo "📱 Interface: http://localhost:8000"
