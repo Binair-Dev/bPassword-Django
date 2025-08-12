@@ -22,12 +22,15 @@ services:
     ports:
       - "8001:8000"
     volumes:
-      - data:/data
-      - logs:/logs
-      - backups:/backups
+      - bpassword_data:/data
+      - bpassword_logs:/logs
+      - bpassword_backups:/backups
     restart: unless-stopped
 
 volumes:
-  data:
-  logs:
-  backups:
+  bpassword_data:
+    external: true
+  bpassword_logs:
+    external: true
+  bpassword_backups:
+    external: true
