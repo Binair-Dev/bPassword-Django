@@ -1,0 +1,152 @@
+{% extends 'base.html' %}
+{% block title %}Configurer la double authentification{% endblock %}
+{% block content %}
+<div class="container" style="padding-top: 50px;">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h2><i class="fas fa-mobile-alt"></i> Configurer la double authentification</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <div class="card">
+                <div class="card-header">
+                    <h5>Étape 1 : Scanner le QR code</h5>
+                </div>
+                <div class="card-body text-center">
+                    <p class="mb-4">
+                        Scannez ce QR code avec votre application d'authentification :
+                    </p>
+                    
+                    <!-- QR Code -->
+                    <div class="mb-4">
+                        <img src="data:image/png;base64,{{ qr_code }}" alt="QR Code 2FA" class="img-fluid" style="max-width: 200px;">
+                    </div>
+                    
+                    <!-- Applications recommandées -->
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-download"></i> Applications recommandées :</h6>
+                        <div class="row text-center">
+                            <div class="col-md-4">
+                                <i class="fab fa-google fa-2x text-primary"></i><br>
+                                <small><strong>Google Authenticator</strong></small>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="fas fa-shield-alt fa-2x text-success"></i><br>
+                                <small><strong>Authy</strong></small>
+                            </div>
+                            <div class="col-md-4">
+                                <i class="fas fa-key fa-2x text-warning"></i><br>
+                                <small><strong>1Password</strong></small>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Clé manuelle -->
+                    <div class="mt-4">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#manualKey" aria-expanded="false">
+                            <i class="fas fa-keyboard"></i> Saisie manuelle
+                        </button>
+                        <div class="collapse" id="manualKey">
+                            <div class="card card-body mt-2">
+                                <p><strong>Nom du compte :</strong> {{ app_name }} ({{ username }})</p>
+                                <p><strong>Clé secrète :</strong></p>
+                                <code>{{ secret_key }}</code>
+                                <br><small class="text-muted">Conservez cette clé en lieu sûr</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5>Étape 2 : Vérification</h5>
+                </div>
+                <div class="card-body">
+                    <p>Entrez le code à 6 chiffres généré par votre application :</p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <label for="token">Code de vérification :</label>
+                            <input type="text" id="token" name="token" class="form-control text-center" 
+                                   placeholder="000000" maxlength="6" pattern="[0-9]{6}" 
+                                   autocomplete="one-time-code" required>
+                            <small class="form-text text-muted">
+                                Le code change toutes les 30 secondes
+                            </small>
+                        </div>
+                        
+                        <div class="text-center">
+                            <button type="submit" class="btn btn-success btn-lg">
+                                <i class="fas fa-check"></i> Activer la 2FA
+                            </button>
+                            <a href="{% url 'account_security' %}" class="btn btn-secondary btn-lg ml-2">
+                                <i class="fas fa-times"></i> Annuler
+                            </a>
+                        </div>
+                    </form>
+                </div>
+            </div>
+            
+            <!-- Instructions -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-question-circle"></i> Comment ça marche ?</h5>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li class="mb-2">
+                            <strong>Téléchargez</strong> une application d'authentification sur votre téléphone
+                        </li>
+                        <li class="mb-2">
+                            <strong>Scannez</strong> le QR code avec l'application
+                        </li>
+                        <li class="mb-2">
+                            <strong>Entrez</strong> le code généré pour vérifier la configuration
+                        </li>
+                        <li class="mb-2">
+                            <strong>Lors de vos prochaines connexions</strong>, vous devrez entrer votre mot de passe ET le code de l'application
+                        </li>
+                    </ol>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <i class="fas fa-exclamation-triangle"></i>
+                        <strong>Important :</strong> Après activation, vous recevrez des codes de backup à conserver précieusement en cas de perte de votre téléphone.
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-focus sur le champ de code et format automatique
+document.getElementById('token').addEventListener('input', function(e) {
+    // Limiter aux chiffres uniquement
+    this.value = this.value.replace(/[^0-9]/g, '');
+    
+    // Auto-submit si 6 chiffres
+    if (this.value.length === 6) {
+        // Petite pause pour l'UX
+        setTimeout(() => {
+            this.closest('form').submit();
+        }, 500);
+    }
+});
+
+// Focus automatique
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('token').focus();
+});
+</script>
+{% endblock %}

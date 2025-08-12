@@ -29,6 +29,9 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'django_otp',
+    'django_otp.plugins.otp_totp',
+    'django_otp.plugins.otp_static',
     'accounts',
     'passwords',
 ]
@@ -39,6 +42,7 @@ MIDDLEWARE = [
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
+    'django_otp.middleware.OTPMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
 ]
@@ -124,7 +128,7 @@ DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Sécurité
 SECURE_SSL_REDIRECT = not DEBUG  # HTTPS activé en production
-SECURE_HSTS_SECONDS = 31536000 if not DEBUG else 0
+SECURE_HSTS_SECONDS = 63072000 if not DEBUG else 0  # 2 ans
 SECURE_HSTS_INCLUDE_SUBDOMAINS = not DEBUG
 SECURE_HSTS_PRELOAD = not DEBUG
 SECURE_CONTENT_TYPE_NOSNIFF = True
@@ -132,11 +136,33 @@ SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
 SECURE_REFERRER_POLICY = 'strict-origin-when-cross-origin'
 
+# Headers de sécurité supplémentaires
+SECURE_CROSS_ORIGIN_OPENER_POLICY = 'same-origin'
+SECURE_PERMISSIONS_POLICY = {
+    'geolocation': [],
+    'microphone': [],
+    'camera': [],
+    'payment': [],
+    'usb': [],
+}
+
+# Content Security Policy
+CSP_DEFAULT_SRC = ["'self'"]
+CSP_SCRIPT_SRC = ["'self'", "'unsafe-inline'", "https://code.jquery.com", "https://cdn.jsdelivr.net", "https://stackpath.bootstrapcdn.com"]
+CSP_STYLE_SRC = ["'self'", "'unsafe-inline'", "https://stackpath.bootstrapcdn.com", "https://cdnjs.cloudflare.com"]
+CSP_IMG_SRC = ["'self'", "data:", "https:"]
+CSP_FONT_SRC = ["'self'", "https://cdnjs.cloudflare.com"]
+CSP_CONNECT_SRC = ["'self'"]
+CSP_FRAME_ANCESTORS = ["'none'"]
+CSP_BASE_URI = ["'self'"]
+
 # Session - Sécurisé
 SESSION_COOKIE_SECURE = not DEBUG  # HTTPS requis en production
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Strict'  # Sécurisé
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
+SESSION_COOKIE_AGE = 3600  # 1 heure max
+SESSION_SAVE_EVERY_REQUEST = True
 
 # CSRF - Sécurisé
 CSRF_COOKIE_SECURE = not DEBUG  # HTTPS requis en production
@@ -152,3 +178,40 @@ CSRF_TRUSTED_ORIGINS = [
 LOGIN_URL = '/accounts/login/'
 LOGIN_REDIRECT_URL = '/passwords/'
 LOGOUT_REDIRECT_URL = '/accounts/login/'
+
+# Configuration du cache pour le rate limiting
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'bpassword-cache',
+    }
+}
+
+# Logging de sécurité
+LOGGING = {
+    'version': 1,
+    'disable_existing_loggers': False,
+    'formatters': {
+        'security': {
+            'format': '{asctime} {levelname} {name} {message}',
+            'style': '{',
+        },
+    },
+    'handlers': {
+        'security_file': {
+            'level': 'INFO',
+            'class': 'logging.handlers.RotatingFileHandler',
+            'filename': BASE_DIR / 'logs' / 'security.log',
+            'maxBytes': 1024*1024*5,  # 5 MB
+            'backupCount': 5,
+            'formatter': 'security',
+        },
+    },
+    'loggers': {
+        'security': {
+            'handlers': ['security_file'],
+            'level': 'INFO',
+            'propagate': False,
+        },
+    },
+}

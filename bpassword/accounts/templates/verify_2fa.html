@@ -1,0 +1,141 @@
+{% extends 'base.html' %}
+{% block title %}Vérification 2FA{% endblock %}
+{% block content %}
+<div class="container text-center" style="padding-top: 100px;">
+    <div class="row">
+        <div class="col-md-6 mx-auto">
+            <div class="card">
+                <div class="card-body">
+                    <h3 class="card-title">
+                        <i class="fas fa-shield-alt text-primary"></i><br>
+                        Vérification en deux étapes
+                    </h3>
+                    
+                    {% if messages %}
+                        {% for message in messages %}
+                            <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                    
+                    <p class="text-muted mb-4">
+                        Entrez le code de votre application d'authentification
+                    </p>
+                    
+                    <form method="post">
+                        {% csrf_token %}
+                        <div class="form-group">
+                            <input type="text" id="token" name="token" class="form-control form-control-lg text-center" 
+                                   placeholder="000000" maxlength="6" pattern="[0-9]{6}" 
+                                   autocomplete="one-time-code" required style="font-size: 1.5em; letter-spacing: 0.2em;">
+                            <small class="form-text text-muted mt-2">
+                                <i class="fas fa-clock"></i> Le code change toutes les 30 secondes
+                            </small>
+                        </div>
+                        
+                        <button type="submit" class="btn btn-primary btn-lg btn-block">
+                            <i class="fas fa-unlock"></i> Vérifier
+                        </button>
+                    </form>
+                    
+                    {% if backup_codes_available %}
+                    <div class="mt-4">
+                        <button class="btn btn-link" type="button" data-toggle="collapse" data-target="#backupCodeForm" aria-expanded="false">
+                            <i class="fas fa-key"></i> Utiliser un code de backup
+                        </button>
+                        
+                        <div class="collapse" id="backupCodeForm">
+                            <div class="card card-body mt-2">
+                                <form method="post">
+                                    {% csrf_token %}
+                                    <div class="form-group">
+                                        <label for="backup_token">Code de backup :</label>
+                                        <input type="text" id="backup_token" name="token" class="form-control text-center" 
+                                               placeholder="CODE-BACKUP" maxlength="8" required>
+                                        <small class="form-text text-muted">
+                                            Chaque code ne peut être utilisé qu'une seule fois
+                                        </small>
+                                    </div>
+                                    <button type="submit" class="btn btn-warning btn-sm">
+                                        <i class="fas fa-key"></i> Utiliser le code de backup
+                                    </button>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endif %}
+                    
+                    <div class="mt-4">
+                        <a href="{% url 'logout' %}" class="btn btn-outline-secondary">
+                            <i class="fas fa-sign-out-alt"></i> Se déconnecter
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Aide -->
+            <div class="card mt-4">
+                <div class="card-body">
+                    <h6><i class="fas fa-question-circle"></i> Besoin d'aide ?</h6>
+                    <small class="text-muted">
+                        • Ouvrez votre application d'authentification (Google Authenticator, Authy, etc.)<br>
+                        • Trouvez l'entrée "bPassword"<br>
+                        • Entrez le code à 6 chiffres affiché<br>
+                        {% if backup_codes_available %}
+                        • En cas de problème, utilisez un code de backup
+                        {% endif %}
+                    </small>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+// Auto-format et focus
+document.getElementById('token').addEventListener('input', function(e) {
+    // Limiter aux chiffres uniquement
+    this.value = this.value.replace(/[^0-9]/g, '');
+    
+    // Auto-submit si 6 chiffres
+    if (this.value.length === 6) {
+        setTimeout(() => {
+            this.closest('form').submit();
+        }, 500);
+    }
+});
+
+// Auto-format pour code de backup
+const backupInput = document.getElementById('backup_token');
+if (backupInput) {
+    backupInput.addEventListener('input', function(e) {
+        // Permettre lettres et chiffres, convertir en majuscules
+        this.value = this.value.replace(/[^A-Z0-9]/gi, '').toUpperCase();
+    });
+}
+
+// Focus automatique
+document.addEventListener('DOMContentLoaded', function() {
+    document.getElementById('token').focus();
+});
+
+// Animation de sécurité
+document.querySelector('.card').style.animation = 'fadeIn 0.5s ease-in';
+</script>
+
+<style>
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+#token:focus {
+    box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+    border-color: #007bff;
+}
+</style>
+{% endblock %}

@@ -1,0 +1,203 @@
+{% extends 'base.html' %}
+{% block title %}Codes de backup{% endblock %}
+{% block content %}
+<div class="container" style="padding-top: 50px;">
+    <div class="row">
+        <div class="col-md-8 mx-auto">
+            <h2><i class="fas fa-key"></i> Codes de backup</h2>
+            
+            {% if messages %}
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+            
+            <div class="alert alert-warning">
+                <h5><i class="fas fa-exclamation-triangle"></i> Important !</h5>
+                <ul class="mb-0">
+                    <li>Ces codes ne peuvent être utilisés qu'<strong>une seule fois</strong> chacun</li>
+                    <li>Conservez-les dans un <strong>endroit sûr</strong> (coffre-fort, gestionnaire de mots de passe)</li>
+                    <li>Utilisez-les uniquement si vous n'avez <strong>pas accès</strong> à votre téléphone</li>
+                    <li><strong>Ne les partagez jamais</strong> avec personne</li>
+                </ul>
+            </div>
+            
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Vos codes de backup ({{ backup_codes|length }} disponibles)</h5>
+                    <button class="btn btn-outline-primary btn-sm" onclick="printCodes()">
+                        <i class="fas fa-print"></i> Imprimer
+                    </button>
+                </div>
+                <div class="card-body">
+                    {% if backup_codes %}
+                        <div class="row" id="backup-codes-list">
+                            {% for code in backup_codes %}
+                                <div class="col-md-6 mb-3">
+                                    <div class="input-group">
+                                        <input type="text" class="form-control text-center bg-light" 
+                                               value="{{ code }}" readonly style="font-family: monospace; font-size: 1.1em;">
+                                        <div class="input-group-append">
+                                            <button class="btn btn-outline-secondary" type="button" 
+                                                    onclick="copyCode('{{ code }}', this)">
+                                                <i class="fas fa-copy"></i>
+                                            </button>
+                                        </div>
+                                    </div>
+                                </div>
+                            {% endfor %}
+                        </div>
+                        
+                        <div class="text-center mt-4">
+                            <button class="btn btn-success" onclick="downloadCodes()">
+                                <i class="fas fa-download"></i> Télécharger (.txt)
+                            </button>
+                            <button class="btn btn-warning ml-2" onclick="regenerateCodes()">
+                                <i class="fas fa-sync-alt"></i> Régénérer tous les codes
+                            </button>
+                        </div>
+                    {% else %}
+                        <div class="text-center">
+                            <i class="fas fa-exclamation-circle fa-3x text-warning mb-3"></i>
+                            <h5>Aucun code de backup disponible</h5>
+                            <p class="text-muted">Tous vos codes de backup ont été utilisés.</p>
+                            <button class="btn btn-primary" onclick="regenerateCodes()">
+                                <i class="fas fa-plus"></i> Générer de nouveaux codes
+                            </button>
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Instructions d'utilisation -->
+            <div class="card mt-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-info-circle"></i> Comment utiliser ces codes ?</h5>
+                </div>
+                <div class="card-body">
+                    <ol>
+                        <li class="mb-2">
+                            <strong>En cas de perte de téléphone :</strong> 
+                            Lors de la connexion, cliquez sur "Utiliser un code de backup"
+                        </li>
+                        <li class="mb-2">
+                            <strong>Entrez un code :</strong> 
+                            Copiez/collez ou tapez l'un de ces codes
+                        </li>
+                        <li class="mb-2">
+                            <strong>Code utilisé :</strong> 
+                            Une fois utilisé, le code n'est plus valide
+                        </li>
+                        <li class="mb-2">
+                            <strong>Reconfiguration :</strong> 
+                            Dès que possible, reconfigurez votre application d'authentification
+                        </li>
+                    </ol>
+                </div>
+            </div>
+            
+            <div class="text-center mt-4">
+                <a href="{% url 'account_security' %}" class="btn btn-secondary">
+                    <i class="fas fa-arrow-left"></i> Retour à la sécurité
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Zone d'impression cachée -->
+<div id="print-area" style="display: none;">
+    <h2>bPassword - Codes de backup 2FA</h2>
+    <p><strong>Utilisateur :</strong> {{ user.username }}</p>
+    <p><strong>Généré le :</strong> <span id="print-date"></span></p>
+    <hr>
+    <h3>Codes de backup :</h3>
+    <div id="print-codes"></div>
+    <hr>
+    <p><strong>IMPORTANT :</strong></p>
+    <ul>
+        <li>Ces codes ne peuvent être utilisés qu'une seule fois chacun</li>
+        <li>Conservez ce document en lieu sûr</li>
+        <li>Ne partagez jamais ces codes</li>
+        <li>Détruisez ce document après avoir reconfiguré votre 2FA</li>
+    </ul>
+</div>
+
+<script>
+function copyCode(code, button) {
+    navigator.clipboard.writeText(code).then(function() {
+        const icon = button.querySelector('i');
+        const originalClass = icon.className;
+        icon.className = 'fas fa-check text-success';
+        
+        setTimeout(() => {
+            icon.className = originalClass;
+        }, 2000);
+    });
+}
+
+function downloadCodes() {
+    const codes = [{% for code in backup_codes %}'{{ code }}'{% if not forloop.last %},{% endif %}{% endfor %}];
+    const content = `bPassword - Codes de backup 2FA
+Utilisateur: {{ user.username }}
+Généré le: ${new Date().toLocaleString()}
+
+Codes de backup:
+${codes.map((code, index) => `${index + 1}. ${code}`).join('\n')}
+
+IMPORTANT:
+- Ces codes ne peuvent être utilisés qu'une seule fois chacun
+- Conservez ce fichier en lieu sûr
+- Ne partagez jamais ces codes
+- Détruisez ce fichier après avoir reconfiguré votre 2FA`;
+
+    const blob = new Blob([content], { type: 'text/plain' });
+    const url = window.URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'bpassword-backup-codes.txt';
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    window.URL.revokeObjectURL(url);
+}
+
+function printCodes() {
+    const codes = [{% for code in backup_codes %}'{{ code }}'{% if not forloop.last %},{% endif %}{% endfor %}];
+    document.getElementById('print-date').textContent = new Date().toLocaleString();
+    document.getElementById('print-codes').innerHTML = codes.map((code, index) => 
+        `<p><strong>${index + 1}.</strong> <code>${code}</code></p>`
+    ).join('');
+    
+    const printContent = document.getElementById('print-area').innerHTML;
+    const printWindow = window.open('', '_blank');
+    printWindow.document.write(`
+        <html>
+        <head>
+            <title>Codes de backup bPassword</title>
+            <style>
+                body { font-family: Arial, sans-serif; padding: 20px; }
+                code { background: #f8f9fa; padding: 2px 4px; border: 1px solid #ddd; }
+                @media print { body { padding: 0; } }
+            </style>
+        </head>
+        <body>${printContent}</body>
+        </html>
+    `);
+    printWindow.document.close();
+    printWindow.print();
+}
+
+function regenerateCodes() {
+    if (confirm('Êtes-vous sûr de vouloir régénérer tous les codes de backup ? Les codes actuels ne fonctionneront plus.')) {
+        // Ici, vous pouvez ajouter une requête AJAX pour régénérer les codes
+        alert('Fonctionnalité à implémenter - rechargez la page pour voir de nouveaux codes');
+    }
+}
+</script>
+{% endblock %}
