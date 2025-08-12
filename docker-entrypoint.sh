@@ -13,10 +13,9 @@ if [[ "$DATABASE_URL" == postgres* ]]; then
     echo "✅ PostgreSQL est prêt!"
 fi
 
-# Créer le dossier data pour SQLite et logs
-mkdir -p /data
-mkdir -p /logs
-mkdir -p /backups
+# Les dossiers sont créés dans le Dockerfile avec les bonnes permissions
+echo "📁 Vérification des volumes..."
+ls -la /data /logs /backups 2>/dev/null || echo "⚠️  Volumes non montés correctement"
 
 # Se déplacer dans le répertoire Django
 cd /app/bpassword || {

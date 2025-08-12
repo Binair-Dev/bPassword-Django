@@ -29,8 +29,10 @@ COPY . /app/
 COPY docker-entrypoint.sh /app/
 RUN chmod +x /app/docker-entrypoint.sh
 
-# Changer les permissions pour l'utilisateur app
-RUN chown -R app:app /app
+# Créer et configurer les volumes avec permissions
+RUN mkdir -p /data /logs /backups && \
+    chown -R app:app /app /data /logs /backups && \
+    chmod 755 /data /logs /backups
 
 # Passer à l'utilisateur non-root
 USER app
