@@ -20,7 +20,7 @@ services:
       # Sécurité
       DJANGO_SETTINGS_MODULE: bpassword.settings
     ports:
-      - "8000:8000"
+      - "8001:8000"
     volumes:
       - data:/data
       - logs:/logs
