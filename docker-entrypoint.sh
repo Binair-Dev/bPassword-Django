@@ -13,8 +13,10 @@ if [[ "$DATABASE_URL" == postgres* ]]; then
     echo "✅ PostgreSQL est prêt!"
 fi
 
-# Créer le dossier data pour SQLite
-mkdir -p /app/data
+# Créer le dossier data pour SQLite et logs
+mkdir -p /data
+mkdir -p /logs
+mkdir -p /backups
 
 # Se déplacer dans le répertoire Django
 cd /app/bpassword || {
@@ -34,18 +36,20 @@ if [[ "$DEBUG" == "False" ]]; then
     python manage.py collectstatic --noinput
 fi
 
-# Vérifier les utilisateurs existants (sans en créer)
-echo "👤 Vérification des utilisateurs..."
-python manage.py shell << EOF
+# Vérifier l'état de la base de données
+echo "💾 Vérification de la base de données..."
+if [ -f "/data/db.sqlite3" ]; then
+    echo "✅ Base de données existante trouvée - conservation des données"
+    # Vérifier les utilisateurs existants
+    python manage.py shell -c "
 from django.contrib.auth.models import User
-
 user_count = User.objects.count()
-if user_count == 0:
-    print("ℹ️  Aucun utilisateur dans la base de données")
-    print("📝 Utilisez l'interface d'inscription pour créer des comptes")
-else:
-    print(f"ℹ️  {user_count} utilisateur(s) trouvé(s) dans la base")
-EOF
+print(f'ℹ️  {user_count} utilisateur(s) dans la base existante')
+"
+else
+    echo "🆕 Nouvelle installation - base de données sera créée"
+    echo "📝 Utilisez l'interface d'inscription pour créer des comptes"
+fi
 
 echo "🚀 bPassword est prêt!"
 echo "📱 Interface: http://localhost:8000"
