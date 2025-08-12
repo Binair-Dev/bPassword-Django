@@ -79,9 +79,13 @@ WSGI_APPLICATION = 'bpassword.wsgi.application'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
 
 DATABASES = {
-    'default': dj_database_url.parse(
-        os.getenv('DATABASE_URL', 'sqlite:////data/db.sqlite3')
-    )
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': '/data/db.sqlite3',
+        'OPTIONS': {
+            'timeout': 20,
+        }
+    }
 }
 
 

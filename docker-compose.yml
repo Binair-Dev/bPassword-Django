@@ -11,8 +11,8 @@ services:
       DEBUG: "False"
       ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web,192.168.0.249,bpassword.b-services.be
       
-      # Base de données SQLite - Persistante
-      DATABASE_URL: sqlite:////data/db.sqlite3
+      # Base de données SQLite - Persistante (ne pas utiliser DATABASE_URL qui pose problème)
+      # DATABASE_URL: sqlite:////data/db.sqlite3
       
       # Chiffrement
       ENCRYPTION_KEY: 649ceffd6d1411183e383a98678deee35f5fb34f93defbc96cbad05145521b11
