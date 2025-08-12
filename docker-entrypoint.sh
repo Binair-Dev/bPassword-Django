@@ -36,29 +36,13 @@ cd /app/bpassword || {
     exit 1
 }
 
-# Appliquer les migrations
-echo "🗄️  Application des migrations..."
-python manage.py migrate --noinput
-
-# Collecter les fichiers statiques (pour la production)
-if [[ "$DEBUG" == "False" ]]; then
-    echo "📁 Collecte des fichiers statiques..."
-    python manage.py collectstatic --noinput
-fi
-
-# Diagnostic de la configuration Django
-echo "🔧 Variables d'environnement Django:"
-echo "DATABASE_URL = $DATABASE_URL"
-echo "SECRET_KEY = ${SECRET_KEY:0:20}..."
-
-# Test des permissions sur le dossier /data
+# Test des permissions sur le dossier /data AVANT les migrations
 echo "🔐 Test complet des permissions..."
 ls -la /data/
 echo "📍 Tentative de création du fichier DB manuellement..."
 if touch /data/db.sqlite3; then
     echo "✅ Fichier db.sqlite3 créé avec succès"
-    rm -f /data/db.sqlite3
-    echo "🗑️ Fichier de test supprimé"
+    ls -la /data/db.sqlite3
 else
     echo "❌ Impossible de créer db.sqlite3"
 fi
@@ -79,28 +63,21 @@ except Exception as e:
     print('❌ SQLite direct échoue:', str(e))
 "
 
-# Test de connexion à la base
-echo "💾 Test de connexion à la base de données..."
-python manage.py shell -c "
-from django.db import connection
-from django.conf import settings
-print('Database engine:', settings.DATABASES['default']['ENGINE'])
-print('Database name:', settings.DATABASES['default']['NAME'])
-try:
-    with connection.cursor() as cursor:
-        cursor.execute('SELECT 1')
-    print('✅ Connexion DB réussie')
-except Exception as e:
-    print('❌ ERREUR DB:', str(e))
-    import os
-    db_path = settings.DATABASES['default']['NAME']
-    print('Chemin DB:', db_path)
-    print('DB exists:', os.path.exists(db_path))
-    print('DB dir exists:', os.path.exists(os.path.dirname(db_path)))
-    print('DB dir perms:', oct(os.stat(os.path.dirname(db_path)).st_mode)[-3:])
-    print('Current user:', os.getuid())
-    print('Current group:', os.getgid())
-"
+# Appliquer les migrations
+echo "🗄️  Application des migrations..."
+python manage.py migrate --noinput
+
+# Collecter les fichiers statiques (pour la production)
+if [[ "$DEBUG" == "False" ]]; then
+    echo "📁 Collecte des fichiers statiques..."
+    python manage.py collectstatic --noinput
+fi
+
+# Diagnostic de la configuration Django
+echo "🔧 Variables d'environnement Django:"
+echo "DATABASE_URL = $DATABASE_URL"
+echo "SECRET_KEY = ${SECRET_KEY:0:20}..."
+
 
 echo "🚀 bPassword est prêt!"
 echo "📱 Interface: http://localhost:8000"
