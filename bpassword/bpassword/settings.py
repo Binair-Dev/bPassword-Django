@@ -80,7 +80,7 @@ WSGI_APPLICATION = 'bpassword.wsgi.application'
 
 DATABASES = {
     'default': dj_database_url.parse(
-        os.getenv('DATABASE_URL', f'sqlite:///{BASE_DIR}/db.sqlite3')
+        os.getenv('DATABASE_URL', f'sqlite:///data/db.sqlite3')
     )
 }
 
@@ -201,7 +201,7 @@ LOGGING = {
         'security_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR / 'logs' / 'security.log',
+            'filename': '/logs/security.log',
             'maxBytes': 1024*1024*5,  # 5 MB
             'backupCount': 5,
             'formatter': 'security',
