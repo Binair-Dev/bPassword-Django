@@ -29,15 +29,18 @@ services:
     container_name: bpassword_web
     environment:
       # Configuration Django
-      SECRET_KEY: django-super-secret-key-for-production-change-this-2024-secure
+      SECRET_KEY: 4c2baef06750e907ef507b87ef5720109271b135b7d756cbab269811d0faaf86
       DEBUG: "False"
-      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web,192.168.0.249,bpassword.b-services.be,*
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web,192.168.0.249,bpassword.b-services.be
       
       # Base de données - SQLite (par défaut, plus simple)
       DATABASE_URL: sqlite:////app/data/db.sqlite3
       
       # Base de données - PostgreSQL (décommenter pour utiliser PostgreSQL)
       # DATABASE_URL: postgres://bpassword_user:bpassword_secure_password_2024@postgres:5432/bpassword
+      
+      # Chiffrement
+      ENCRYPTION_KEY: 649ceffd6d1411183e383a98678deee35f5fb34f93defbc96cbad05145521b11
       
       # Sécurité
       DJANGO_SETTINGS_MODULE: bpassword.settings
