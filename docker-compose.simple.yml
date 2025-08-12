@@ -1,41 +1,36 @@
 version: '3.8'
 
-# Configuration simplifiée sans PostgreSQL
+# Configuration simplifiée sans PostgreSQL - Base de données persistante
 services:
-  # Application Django bPassword - Mode simple
+  # Application Django bPassword - Mode simple avec données persistantes
   web:
     build: .
     container_name: bpassword_web_simple
     environment:
       # Configuration Django
-      SECRET_KEY: django-super-secret-key-for-production-change-this-2024-secure
-      DEBUG: "True"
-      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web,192.168.0.249,bpassword.b-services.be,*
+      SECRET_KEY: 4c2baef06750e907ef507b87ef5720109271b135b7d756cbab269811d0faaf86
+      DEBUG: "False"
+      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web,192.168.0.249,bpassword.b-services.be
       
-      # Base de données SQLite uniquement
+      # Base de données SQLite - Persistante avec dossier local
       DATABASE_URL: sqlite:////app/data/db.sqlite3
+      
+      # Chiffrement
+      ENCRYPTION_KEY: 649ceffd6d1411183e383a98678deee35f5fb34f93defbc96cbad05145521b11
       
       # Sécurité
       DJANGO_SETTINGS_MODULE: bpassword.settings
     ports:
       - "8001:8000"
     volumes:
-      - sqlite_data:/app/data  # Volume pour les données persistantes
+      # ✅ Volume persistant avec dossier local - NE SE SUPPRIME JAMAIS
+      - ./data:/app/data
       - ./backups:/app/backups
-      - static_volume:/app/static
-      - media_volume:/app/media
+      - ./logs:/app/logs
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "import requests; requests.get('http://localhost:8000/accounts/login/', timeout=5)"]
+      test: ["CMD", "python", "/app/bpassword/manage.py", "check"]
       interval: 30s
       timeout: 10s
       retries: 3
       start_period: 40s
-
-volumes:
-  sqlite_data:
-    driver: local
-  static_volume:
-    driver: local
-  media_volume:
-    driver: local
