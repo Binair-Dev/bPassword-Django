@@ -176,6 +176,8 @@ def backup_codes(request):
         'backup_codes': codes
     })
 
+from api.models import APIKey
+
 @login_required
 def account_security(request):
     """Vue principale des paramètres de sécurité"""
@@ -183,7 +185,34 @@ def account_security(request):
     is_2fa_enabled = TOTPManager.is_2fa_enabled(user)
     backup_codes_count = len(TOTPManager.get_backup_codes(user)) if is_2fa_enabled else 0
     
+    try:
+        api_key = APIKey.objects.get(user=user)
+    except APIKey.DoesNotExist:
+        api_key = None
+
     return render(request, 'account_security.html', {
         'is_2fa_enabled': is_2fa_enabled,
-        'backup_codes_count': backup_codes_count
+        'backup_codes_count': backup_codes_count,
+        'api_key': api_key,
     })
+
+@login_required
+@csrf_protect
+def generate_api_key(request):
+    """Génère une nouvelle clé API pour l'utilisateur"""
+    if request.method == 'POST':
+        # Supprimer l'ancienne clé s'il y en a une
+        APIKey.objects.filter(user=request.user).delete()
+        # Créer une nouvelle clé
+        APIKey.objects.create(user=request.user)
+        messages.success(request, 'Une nouvelle clé API a été générée avec succès.')
+    return redirect('account_security')
+
+@login_required
+@csrf_protect
+def delete_api_key(request):
+    """Supprime la clé API de l'utilisateur"""
+    if request.method == 'POST':
+        APIKey.objects.filter(user=request.user).delete()
+        messages.success(request, 'La clé API a été supprimée avec succès.')
+    return redirect('account_security')

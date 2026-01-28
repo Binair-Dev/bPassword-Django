@@ -69,6 +69,56 @@
                     {% endif %}
                 </div>
             </div>
+
+            <!-- Gestion des clés API -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5><i class="fas fa-key"></i> Gestion des clés API</h5>
+                </div>
+                <div class="card-body">
+                    {% if api_key %}
+                        <div class="form-group mb-3">
+                            <label for="apiKeyDisplay">Votre clé API :</label>
+                            <div class="input-group">
+                                <input type="text" id="apiKeyDisplay" class="form-control" value="{{ api_key.key }}" readonly aria-label="API Key">
+                                <div class="input-group-append">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="copyApiKey()">
+                                        <i class="fas fa-copy"></i> Copier
+                                    </button>
+                                </div>
+                            </div>
+                            <small class="form-text text-muted">
+                                Gardez votre clé API en sécurité. Ne la partagez jamais.
+                            </small>
+                        </div>
+                        <form method="post" action="{% url 'delete_api_key' %}" onsubmit="return confirm('Êtes-vous sûr de vouloir supprimer votre clé API ? Vous ne pourrez plus l\'utiliser et devrez en générer une nouvelle.')">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-danger">
+                                <i class="fas fa-trash-alt"></i> Supprimer la clé API
+                            </button>
+                        </form>
+                    {% else %}
+                        <p class="text-muted">
+                            Aucune clé API active. Générez-en une pour accéder à l'API bPassword.
+                        </p>
+                        <form method="post" action="{% url 'generate_api_key' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-plus"></i> Générer une clé API
+                            </button>
+                        </form>
+                    {% endif %}
+                </div>
+            </div>
+            <script>
+                function copyApiKey() {
+                    var apiKeyInput = document.getElementById('apiKeyDisplay');
+                    apiKeyInput.select();
+                    apiKeyInput.setSelectionRange(0, 99999); /* For mobile devices */
+                    document.execCommand('copy');
+                    alert('Clé API copiée dans le presse-papiers !');
+                }
+            </script>
             
             <!-- Autres paramètres de sécurité -->
             <div class="card mb-4">

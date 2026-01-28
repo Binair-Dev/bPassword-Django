@@ -32,8 +32,10 @@ INSTALLED_APPS = [
     'django_otp',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
+    'rest_framework',
     'accounts',
     'passwords',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -81,7 +83,7 @@ WSGI_APPLICATION = 'bpassword.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': '/data/db.sqlite3',
+        'NAME': BASE_DIR.parent / 'data/db.sqlite3',
         'OPTIONS': {
             'timeout': 20,
         }
@@ -206,7 +208,7 @@ LOGGING = {
         'security_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': '/logs/security.log',
+            'filename': BASE_DIR.parent / 'logs/security.log',
             'maxBytes': 1024*1024*5,  # 5 MB
             'backupCount': 5,
             'formatter': 'security',
