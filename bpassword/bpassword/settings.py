@@ -83,7 +83,7 @@ WSGI_APPLICATION = 'bpassword.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR.parent / 'data/db.sqlite3',
+        'NAME': '/data/db.sqlite3',
         'OPTIONS': {
             'timeout': 20,
         }
@@ -208,7 +208,7 @@ LOGGING = {
         'security_file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': BASE_DIR.parent / 'logs/security.log',
+            'filename': '/logs/security.log',
             'maxBytes': 1024*1024*5,  # 5 MB
             'backupCount': 5,
             'formatter': 'security',
