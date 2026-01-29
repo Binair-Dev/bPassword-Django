@@ -50,10 +50,10 @@ class CredentialSearchView(APIView):
             return Response({"detail": "Query parameter 'q' is required."}, status=status.HTTP_400_BAD_REQUEST)
         
         # Filter credentials for the authenticated user
-        # Perform case-insensitive search on 'name' or 'username' fields
+        # Perform case-insensitive search on 'name' field
         credentials = Credentials.objects.filter(
             Q(user=request.user) & 
-            (Q(name__icontains=query) | Q(username__icontains=query))
+            Q(name__icontains=query)
         )
         
         results = []
