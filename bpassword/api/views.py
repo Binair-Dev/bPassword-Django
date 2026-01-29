@@ -69,8 +69,6 @@ class CredentialSearchView(APIView):
                 "name": cred.name,
                 "username": cred.username,
                 "password": decrypted_password,
-                "url": cred.url,
-                "notes": cred.notes,
             })
         
         return Response(results, status=status.HTTP_200_OK)
