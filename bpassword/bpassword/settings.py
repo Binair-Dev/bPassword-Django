@@ -203,6 +203,10 @@ LOGGING = {
             'format': '{asctime} {levelname} {name} {message}',
             'style': '{',
         },
+        'verbose': {
+            'format': '{levelname} {asctime} {module} {process:d} {thread:d} {message}',
+            'style': '{',
+        },
     },
     'handlers': {
         'security_file': {
@@ -213,12 +217,27 @@ LOGGING = {
             'backupCount': 5,
             'formatter': 'security',
         },
+        'console': {
+            'level': 'INFO',
+            'class': 'logging.StreamHandler',
+            'formatter': 'verbose'
+        },
     },
     'loggers': {
         'security': {
-            'handlers': ['security_file'],
+            'handlers': ['security_file', 'console'], # Added console handler
             'level': 'INFO',
             'propagate': False,
+        },
+        'django': {
+            'handlers': ['console'], # Added console handler for Django messages
+            'level': 'INFO',
+            'propagate': False,
+        },
+        '': { # Root logger
+            'handlers': ['console'],
+            'level': 'INFO',
+            'propagate': True,
         },
     },
 }
