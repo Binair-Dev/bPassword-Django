@@ -68,9 +68,6 @@ async function saveConfiguration() {
     // Save to storage
     await chrome.storage.local.set({ apiUrl, apiKey });
 
-    // Update API instance
-    api.baseUrl = apiUrl;
-
     showTestResult('success', 'Configuration enregistrée avec succès !');
     showToast('Configuration enregistrée');
 
@@ -107,8 +104,7 @@ async function testConnection() {
 
   try {
     // Temporarily update API instance
-    api.baseUrl = apiUrl;
-    api.setApiKey(apiKey);
+    await api.setApiKey(apiKey);
 
     // Test connection
     const result = await api.testConnection();

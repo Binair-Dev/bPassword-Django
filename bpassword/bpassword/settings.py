@@ -202,6 +202,10 @@ CSRF_TRUSTED_ORIGINS = [
     'https://bpassword.b-services.be',
     'https://localhost:8001',
     'https://127.0.0.1:8001',
+    # Extensions Chrome/Brave (pour l'extension bPassword)
+    # Note: Les extensions utilisent chrome-extension://<random-id>
+    'chrome-extension://',
+    'moz-extension://',  # Firefox (si support ajouté plus tard)
 ]
 
 # Redirections après connexion/déconnexion

@@ -1,6 +1,6 @@
 class BPasswordAPI {
   constructor() {
-    this.baseUrl = 'https://bpassword.b-services.be/api';
+    this.defaultUrl = 'https://bpassword.b-services.be/api';
   }
 
   async getApiKey() {
@@ -14,7 +14,7 @@ class BPasswordAPI {
 
   async getApiUrl() {
     const result = await chrome.storage.local.get('apiUrl');
-    return result.apiUrl || this.baseUrl;
+    return result.apiUrl || this.defaultUrl;
   }
 
   async request(endpoint, options = {}) {
