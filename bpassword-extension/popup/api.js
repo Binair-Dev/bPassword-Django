@@ -15,7 +15,9 @@ class BPasswordAPI {
 
   async getApiUrl() {
     const result = await chrome.storage.local.get('apiUrl');
-    return result.apiUrl || this.defaultUrl;
+    const url = result.apiUrl || this.defaultUrl;
+    // Remove trailing slashes to prevent double slash and redirects
+    return url.endsWith('/') ? url : url + '/';
   }
 
   async request(endpoint, options = {}) {
