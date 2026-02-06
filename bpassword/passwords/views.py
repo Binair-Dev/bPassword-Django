@@ -288,14 +288,28 @@ def import_credentials(request):
                 return JsonResponse({'error': 'Le JSON doit contenir un tableau'}, status=400)
             
             imported_count = 0
+            skipped_count = 0
+            imported_names = set()  # Garder une trace des noms déjà importés
+
             for cred_data in credentials_data:
                 if isinstance(cred_data, dict) and all(key in cred_data for key in ['name', 'username', 'password']):
                     # Validation des données
                     name = str(cred_data['name']).strip()[:255]
                     username = str(cred_data['username']).strip()[:255]
                     password = str(cred_data['password']).strip()
-                    
+
                     if all([name, username, password]):
+                        # Vérifier si le nom a déjà été importé (doublon dans le fichier)
+                        if name in imported_names:
+                            skipped_count += 1
+                            continue
+
+                        # Vérifier si l'identifiant existe déjà en base de données
+                        if Credentials.objects.filter(user=request.user, name=name).exists():
+                            skipped_count += 1
+                            imported_names.add(name)
+                            continue
+
                         credential = Credentials.objects.create(
                             user=request.user,
                             name=name,
@@ -303,10 +317,13 @@ def import_credentials(request):
                             password=password
                         )
                         imported_count += 1
+                        imported_names.add(name)
             
             return JsonResponse({
                 'success': True,
-                'message': f'{imported_count} identifiants importés avec succès'
+                'message': f'{imported_count} identifiant(s) importé(s) avec succès',
+                'imported': imported_count,
+                'skipped': skipped_count
             })
             
         except json.JSONDecodeError:
