@@ -133,7 +133,8 @@ function injectButton(passwordInput, parent) {
   button.addEventListener('click', (e) => {
     e.preventDefault();
     e.stopPropagation();
-    openPasswordManager();
+    // Just show a notification, don't send message to avoid redirect loop
+    showNotification();
   });
 
   // Add button to container
