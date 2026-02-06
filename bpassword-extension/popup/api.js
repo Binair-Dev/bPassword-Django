@@ -72,7 +72,7 @@ class BPasswordAPI {
 
   // Get single credential
   async getCredential(id) {
-    return this.request(`credentials/${id}/`, { method: 'GET' });
+    return this.request(`credentials/${id}`, { method: 'GET' });
   }
 
   // Create credential
@@ -93,7 +93,7 @@ class BPasswordAPI {
 
   // Delete credential
   async deleteCredential(id) {
-    return this.request(`credentials/${id}/`, { method: 'DELETE' });
+    return this.request(`credentials/${id}`, { method: 'DELETE' });
   }
 
   // Test connection
