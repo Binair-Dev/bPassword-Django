@@ -28,10 +28,11 @@ DISABLE_SSL_REDIRECT = os.getenv('DISABLE_SSL_REDIRECT', 'False').lower() == 'tr
 
 # Configuration pour Cloudflare / Proxy
 # Permet à Django de détecter HTTPS via le header X-Forwarded-Proto
-if BEHIND_PROXY:
-    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
-    USE_X_FORWARDED_HOST = True
-    USE_X_FORWARDED_PORT = True
+# NOTE: Temporairement désactivé pour debug
+# if BEHIND_PROXY:
+#     SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+#     USE_X_FORWARDED_HOST = True
+#     USE_X_FORWARDED_PORT = True
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
