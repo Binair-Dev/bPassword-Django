@@ -26,6 +26,13 @@ BEHIND_PROXY = os.getenv('BEHIND_PROXY', 'False').lower() == 'true'
 # Utile pour Cloudflare ou quand l'extension doit utiliser HTTPS malgré le proxy
 DISABLE_SSL_REDIRECT = os.getenv('DISABLE_SSL_REDIRECT', 'False').lower() == 'true'
 
+# Configuration pour Cloudflare / Proxy
+# Permet à Django de détecter HTTPS via le header X-Forwarded-Proto
+if BEHIND_PROXY:
+    SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+    USE_X_FORWARDED_HOST = True
+    USE_X_FORWARDED_PORT = True
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
