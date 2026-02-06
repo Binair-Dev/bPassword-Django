@@ -82,23 +82,23 @@ function renderCredentials(filteredCredentials = null) {
 
   credentialsList.innerHTML = credentialsToRender.map(cred => `
     <div class="credential-card" data-id="${cred.id}">
-      <div class="credential-name">${escapeHtml(cred.name)}</div>
-      <div class="credential-username">
-        <span>${escapeHtml(cred.username)}</span>
-        <div class="credential-actions">
-          <button class="copy-btn copy-username" data-credential-id="${cred.id}" data-type="username" title="Copier l'utilisateur">
-            <span>👤</span> Copier
-          </button>
-          <button class="copy-btn copy-password" data-credential-id="${cred.id}" data-type="password" title="Copier le mot de passe">
-            <span>🔑</span> Copier
-          </button>
-          <button class="copy-btn delete-btn" data-credential-id="${cred.id}" data-type="edit" title="Modifier">
-            <span>✏️</span>
-          </button>
-          <button class="copy-btn delete-btn" data-credential-id="${cred.id}" data-type="delete" title="Supprimer">
-            <span>🗑️</span>
-          </button>
-        </div>
+      <div class="credential-info">
+        <div class="credential-name">${escapeHtml(cred.name)}</div>
+        <div class="credential-username">${escapeHtml(cred.username)}</div>
+      </div>
+      <div class="credential-actions">
+        <button class="copy-btn copy-username" data-credential-id="${cred.id}" data-type="username" title="Copier l'utilisateur">
+          <span>👤</span> Copier user
+        </button>
+        <button class="copy-btn copy-password" data-credential-id="${cred.id}" data-type="password" title="Copier le mot de passe">
+          <span>🔑</span> Copier mdp
+        </button>
+        <button class="copy-btn edit-btn" data-credential-id="${cred.id}" data-type="edit" title="Modifier">
+          <span>✏️</span>
+        </button>
+        <button class="copy-btn delete-btn" data-credential-id="${cred.id}" data-type="delete" title="Supprimer">
+          <span>🗑️</span>
+        </button>
       </div>
     </div>
   `).join('');

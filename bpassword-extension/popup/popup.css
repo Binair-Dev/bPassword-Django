@@ -131,25 +131,33 @@ body {
   background: rgba(76, 175, 80, 0.1);
 }
 
+.credential-info {
+  margin-bottom: 12px;
+}
+
 .credential-name {
   font-weight: 600;
   font-size: 15px;
-  margin-bottom: 8px;
+  margin-bottom: 4px;
   color: var(--text-color);
 }
 
 .credential-username {
   font-size: 13px;
   color: var(--secondary-color);
-  margin-bottom: 8px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
 }
 
 .credential-actions {
   display: flex;
-  gap: 8px;
+  gap: 6px;
+  flex-wrap: wrap;
+}
+
+.credential-actions .copy-btn {
+  flex: 1;
+  min-width: calc(25% - 4.5px);
+  padding: 6px 8px;
+  font-size: 11px;
 }
 
 .copy-btn {
@@ -176,6 +184,14 @@ body {
 
 .copy-btn.copy-password {
   background: var(--primary-color);
+}
+
+.copy-btn.edit-btn {
+  background: var(--secondary-color);
+}
+
+.copy-btn.edit-btn:hover {
+  background: var(--secondary-hover);
 }
 
 .credential-actions .delete-btn {
