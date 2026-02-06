@@ -1,6 +1,6 @@
 class BPasswordAPI {
   constructor() {
-    this.defaultUrl = 'https://bpassword.b-services.be/api';
+    this.defaultUrl = 'https://bpassword.b-services.be/api/';
   }
 
   async getApiKey() {
@@ -65,7 +65,7 @@ class BPasswordAPI {
 
   // List credentials (with optional search)
   async listCredentials(query = '') {
-    const endpoint = query ? `credentials/?q=${encodeURIComponent(query)}` : 'credentials/';
+    const endpoint = query ? `credentials/?q=${encodeURIComponent(query)}` : 'credentials';
     return this.request(endpoint, { method: 'GET' });
   }
 
