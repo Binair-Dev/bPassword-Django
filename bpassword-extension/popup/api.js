@@ -77,7 +77,7 @@ class BPasswordAPI {
 
   // Create credential
   async createCredential(data) {
-    return this.request('credentials/', {
+    return this.request('credentials', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -99,7 +99,7 @@ class BPasswordAPI {
   // Test connection
   async testConnection() {
     try {
-      await this.request('credentials/', { method: 'GET' });
+      await this.request('credentials', { method: 'GET' });
       return { success: true, message: 'Connection successful!' };
     } catch (error) {
       return { success: false, message: error.message };
