@@ -33,7 +33,7 @@ class BPasswordAPI {
     };
 
     try {
-      const response = await fetch(url, { ...options, headers });
+      const response = await fetch(url, { ...options, headers, redirect: 'follow' });
 
       if (!response.ok) {
         if (response.status === 401) {
