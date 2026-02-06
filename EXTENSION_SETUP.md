@@ -63,12 +63,39 @@ curl https://bpassword.b-services.be/api/credentials/
 
 1. Click on the bPassword icon in your browser toolbar
 2. Click on "⚙️ Paramètres" (Settings)
-3. Enter the API URL: `https://bpassword.b-services.be/api`
+3. Enter the API URL:
+   - **Production with HTTPS**: `https://bpassword.b-services.be/api`
+   - **Behind proxy (nginx/traefik)**: `http://bpassword.b-services.be/api`
+   - **Development**: `http://localhost:8001/api`
 4. Enter your API Key (64 hex characters)
    - To get an API key, log in to bPassword and navigate to the API keys section
 5. Click "Tester la connexion" (Test connection)
 6. If successful, you'll see a green success message
 7. Click "Enregistrer" (Save)
+
+### BEHIND_PROXY Configuration
+
+If your Django server has `BEHIND_PROXY=True` in `.env`, you should use **HTTP** URL in the extension:
+
+**Server configuration (docker-compose.yml)**:
+```yaml
+services:
+  web:
+    environment:
+      - BEHIND_PROXY=True  # Server is behind nginx/traefik
+      - ENABLE_HTTPS=True   # HTTPS enabled
+```
+
+**Extension configuration**:
+- API URL: `http://bpassword.b-services.be/api` (not https://)
+- The extension supports both HTTP and HTTPS URLs
+- HTTP URLs are necessary when the server is behind a proxy
+
+**Why HTTP?**
+When BEHIND_PROXY=True:
+- The proxy (nginx/traefik) handles HTTPS termination
+- Django runs on HTTP internally
+- Using HTTPS in the extension would cause mixed content or connection issues
 
 ## Step 6: Test the Extension
 

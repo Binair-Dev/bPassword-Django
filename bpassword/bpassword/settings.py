@@ -22,6 +22,10 @@ ENABLE_HTTPS = os.getenv('ENABLE_HTTPS', 'False').lower() == 'true'
 # Si derrière un proxy SSL, ne pas rediriger (évite boucle ERR_TOO_MANY_REDIRECTS)
 BEHIND_PROXY = os.getenv('BEHIND_PROXY', 'False').lower() == 'true'
 
+# Force désactiver SECURE_SSL_REDIRECT (indépendemment de BEHIND_PROXY)
+# Utile pour Cloudflare ou quand l'extension doit utiliser HTTPS malgré le proxy
+DISABLE_SSL_REDIRECT = os.getenv('DISABLE_SSL_REDIRECT', 'False').lower() == 'true'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
@@ -29,8 +33,12 @@ if ENABLE_HTTPS:
     if DEBUG:
         import warnings
         warnings.warn('HTTPS is enabled with DEBUG=True. This is not recommended for production.')
-    # Ne pas rediriger SSL si derrière un proxy (évite boucle de redirection)
-    SECURE_SSL_REDIRECT = False if BEHIND_PROXY else True
+    # Ne pas rediriger SSL si :
+    # - DISABLE_SSL_REDIRECT=True (force désactivé)
+    # - BEHIND_PROXY=True (derrière proxy)
+    # - Sinon (standard)
+    should_redirect = not DISABLE_SSL_REDIRECT and not BEHIND_PROXY
+    SECURE_SSL_REDIRECT = should_redirect
     SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '31536000'))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
