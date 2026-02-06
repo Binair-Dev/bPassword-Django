@@ -10,3 +10,4 @@ python-dotenv
 django-otp
 qrcode
 pillow
+django-cors-headers

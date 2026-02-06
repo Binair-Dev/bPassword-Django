@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>bPassword</title>
+  <link rel="stylesheet" href="popup.css">
+</head>
+<body>
+  <div class="popup">
+    <div class="header">
+      <h1>bPassword</h1>
+      <div id="connection-status" class="status-disconnected">Not connected</div>
+    </div>
+
+    <div class="search-container">
+      <input type="text" id="search-input" placeholder="Rechercher..." autofocus>
+    </div>
+
+    <div id="credentials-list" class="credentials-list">
+      <div class="loading">Loading...</div>
+    </div>
+
+    <div class="actions">
+      <button id="add-credential-btn" class="btn btn-primary">
+        <span class="icon">+</span> Ajouter
+      </button>
+      <button id="settings-btn" class="btn btn-secondary">
+        <span class="icon">⚙</span> Paramètres
+      </button>
+    </div>
+  </div>
+
+  <!-- Modal pour créer/éditer -->
+  <div id="credential-modal" class="modal hidden">
+    <div class="modal-content">
+      <h2 id="modal-title">Ajouter un identifiant</h2>
+      <form id="credential-form">
+        <input type="hidden" id="credential-id">
+        <div class="form-group">
+          <label for="name">Nom</label>
+          <input type="text" id="name" required>
+        </div>
+        <div class="form-group">
+          <label for="username">Nom d'utilisateur</label>
+          <input type="text" id="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Mot de passe</label>
+          <div class="password-input">
+            <input type="password" id="password" required>
+            <button type="button" id="toggle-password" class="toggle-btn" title="Afficher/Masquer">👁</button>
+            <button type="button" id="generate-password" class="generate-btn" title="Générer">🎲</button>
+          </div>
+        </div>
+        <div class="form-actions">
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+          <button type="button" id="cancel-btn" class="btn btn-secondary">Annuler</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <!-- Toast notification -->
+  <div id="toast" class="toast hidden"></div>
+
+  <script src="api.js"></script>
+  <script src="popup.js"></script>
+</body>
+</html>

@@ -54,6 +54,7 @@ INSTALLED_APPS = [
     'django_otp',
     'django_otp.plugins.otp_totp',
     'django_otp.plugins.otp_static',
+    'corsheaders',
     'rest_framework',
     'accounts',
     'passwords',
@@ -62,6 +63,7 @@ INSTALLED_APPS = [
 
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
@@ -209,6 +211,15 @@ CACHES = {
         'LOCATION': 'bpassword-cache',
     }
 }
+
+# CORS Configuration pour l'extension Chrome/Brave
+CORS_ALLOW_ALL_ORIGINS = True
+CORS_ALLOW_CREDENTIALS = True
+CORS_ALLOWED_HEADERS = [
+    'content-type',
+    'authorization',
+    'x-requested-with',
+]
 
 # Logging de sécurité
 LOGGING = {

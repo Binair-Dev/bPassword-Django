@@ -1,0 +1,131 @@
+/* bPassword Content Script Styles */
+
+.bpassword-button-container {
+  position: absolute;
+  right: 8px;
+  top: 50%;
+  transform: translateY(-50%);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  z-index: 9999;
+}
+
+.bpassword-inject-btn {
+  background: #4CAF50;
+  border: none;
+  border-radius: 4px;
+  color: white;
+  cursor: pointer;
+  font-size: 16px;
+  padding: 6px 8px;
+  transition: all 0.2s;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  outline: none;
+}
+
+.bpassword-inject-btn:hover {
+  background: #45a049;
+  transform: scale(1.1);
+}
+
+.bpassword-inject-btn:active {
+  transform: scale(0.95);
+}
+
+.bpassword-inject-btn:focus {
+  box-shadow: 0 0 0 2px rgba(76, 175, 80, 0.5);
+}
+
+/* Notification styles */
+.bpassword-notification {
+  position: fixed;
+  top: 20px;
+  right: 20px;
+  background: #4CAF50;
+  color: white;
+  padding: 16px 20px;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.3);
+  z-index: 10000;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  animation: bpasswordSlideIn 0.3s ease;
+  max-width: 350px;
+}
+
+@keyframes bpasswordSlideIn {
+  from {
+    opacity: 0;
+    transform: translateX(100%);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.bpassword-notification-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.bpassword-close-btn {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 20px;
+  cursor: pointer;
+  margin-left: 12px;
+  padding: 0;
+  width: 20px;
+  height: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  opacity: 0.8;
+  transition: opacity 0.2s;
+}
+
+.bpassword-close-btn:hover {
+  opacity: 1;
+}
+
+/* Prevent button from interfering with form functionality */
+.bpassword-button-container > button {
+  pointer-events: auto;
+}
+
+/* Ensure injected buttons don't break layout */
+input[type="password"][data-bpassword-injected] {
+  transition: padding-right 0.2s;
+}
+
+/* Dark mode support */
+@media (prefers-color-scheme: dark) {
+  .bpassword-inject-btn {
+    background: #66BB6A;
+  }
+
+  .bpassword-inject-btn:hover {
+    background: #81C784;
+  }
+
+  .bpassword-notification {
+    background: #66BB6A;
+  }
+}
+
+/* High contrast mode support */
+@media (prefers-contrast: high) {
+  .bpassword-inject-btn {
+    border: 2px solid white;
+  }
+
+  .bpassword-notification {
+    border: 2px solid white;
+  }
+}
