@@ -10,7 +10,7 @@ services:
       # Configuration Django pour développement
       SECRET_KEY: django-dev-secret-key-not-for-production
       DEBUG: "True"
-      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0,web}
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0}
 
       # HTTPS/TLS
       ENABLE_HTTPS: ${ENABLE_HTTPS:-False}
