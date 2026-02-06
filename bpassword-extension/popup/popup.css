@@ -162,16 +162,19 @@ body {
 
 .copy-btn {
   background: var(--primary-color);
-  color: white;
+  color: #ffffff !important;
   border: none;
-  padding: 6px 12px;
-  border-radius: 4px;
-  font-size: 12px;
+  padding: 8px 10px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
   cursor: pointer;
   transition: background 0.2s;
   display: flex;
   align-items: center;
+  justify-content: center;
   gap: 4px;
+  min-height: 36px;
 }
 
 .copy-btn:hover {
@@ -180,14 +183,17 @@ body {
 
 .copy-btn.copy-username {
   background: var(--secondary-color);
+  color: #ffffff !important;
 }
 
 .copy-btn.copy-password {
   background: var(--primary-color);
+  color: #ffffff !important;
 }
 
 .copy-btn.edit-btn {
   background: var(--secondary-color);
+  color: #ffffff !important;
 }
 
 .copy-btn.edit-btn:hover {
@@ -196,6 +202,7 @@ body {
 
 .credential-actions .delete-btn {
   background: var(--danger-color);
+  color: #ffffff !important;
 }
 
 .credential-actions .delete-btn:hover {

@@ -87,17 +87,17 @@ function renderCredentials(filteredCredentials = null) {
         <div class="credential-username">${escapeHtml(cred.username)}</div>
       </div>
       <div class="credential-actions">
-        <button class="copy-btn copy-username" data-credential-id="${cred.id}" data-type="username" title="Copier l'utilisateur">
-          <span>👤</span> Copier user
+        <button class="copy-btn copy-username" data-credential-id="${cred.id}" data-type="username" title="Copier l'email">
+          <span>👤</span> Email
         </button>
         <button class="copy-btn copy-password" data-credential-id="${cred.id}" data-type="password" title="Copier le mot de passe">
-          <span>🔑</span> Copier mdp
+          <span>🔑</span> Mdp
         </button>
         <button class="copy-btn edit-btn" data-credential-id="${cred.id}" data-type="edit" title="Modifier">
-          <span>✏️</span>
+          <span>✏️</span> Modif
         </button>
         <button class="copy-btn delete-btn" data-credential-id="${cred.id}" data-type="delete" title="Supprimer">
-          <span>🗑️</span>
+          <span>🗑️</span> Supp
         </button>
       </div>
     </div>
