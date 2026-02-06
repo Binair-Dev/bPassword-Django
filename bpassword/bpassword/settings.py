@@ -18,6 +18,9 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-o7!tlppl)p0ubgjjm$yydh!)uo
 # HTTPS/TLS Configuration
 ENABLE_HTTPS = os.getenv('ENABLE_HTTPS', 'False').lower() == 'true'
 
+# SECURITY WARNING: don't run with debug turned on in production!
+DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
+
 if ENABLE_HTTPS:
     if DEBUG:
         import warnings
@@ -36,9 +39,6 @@ else:
     SECURE_HSTS_PRELOAD = False
     SESSION_COOKIE_SECURE = False
     CSRF_COOKIE_SECURE = False
-
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
 ALLOWED_HOSTS = os.getenv('ALLOWED_HOSTS', 'localhost,127.0.0.1,0.0.0.0,bpassword.b-services.be,*').split(',')
 
