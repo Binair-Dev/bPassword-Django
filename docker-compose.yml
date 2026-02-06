@@ -9,10 +9,10 @@ services:
       # Configuration Django
       SECRET_KEY: 4c2baef06750e907ef507b87ef5720109271b135b7d756cbab269811d0faaf86
       DEBUG: "False"
-      ALLOWED_HOSTS: localhost,127.0.0.1,0.0.0.0,web,192.168.0.249,bpassword.b-services.be,192.168.0.180
+      ALLOWED_HOSTS: ${ALLOWED_HOSTS:-localhost,127.0.0.1,0.0.0.0,web,192.168.0.249,bpassword.b-services.be,192.168.0.180,192.168.0.56}
 
       # HTTPS/TLS
-      ENABLE_HTTPS: "False"
+      ENABLE_HTTPS: ${ENABLE_HTTPS:-False}
 
       # Base de données SQLite - Persistante (ne pas utiliser DATABASE_URL qui pose problème)
       # DATABASE_URL: sqlite:////data/db.sqlite3
