@@ -13,6 +13,7 @@ services:
 
       # HTTPS/TLS
       ENABLE_HTTPS: ${ENABLE_HTTPS:-False}
+      BEHIND_PROXY: ${BEHIND_PROXY:-False}
 
       # Base de données SQLite - Persistante (ne pas utiliser DATABASE_URL qui pose problème)
       # DATABASE_URL: sqlite:////data/db.sqlite3

@@ -18,6 +18,10 @@ SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-o7!tlppl)p0ubgjjm$yydh!)uo
 # HTTPS/TLS Configuration
 ENABLE_HTTPS = os.getenv('ENABLE_HTTPS', 'False').lower() == 'true'
 
+# Configuration Proxy (nginx/traefik)
+# Si derrière un proxy SSL, ne pas rediriger (évite boucle ERR_TOO_MANY_REDIRECTS)
+BEHIND_PROXY = os.getenv('BEHIND_PROXY', 'False').lower() == 'true'
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
@@ -25,7 +29,8 @@ if ENABLE_HTTPS:
     if DEBUG:
         import warnings
         warnings.warn('HTTPS is enabled with DEBUG=True. This is not recommended for production.')
-    SECURE_SSL_REDIRECT = True
+    # Ne pas rediriger SSL si derrière un proxy (évite boucle de redirection)
+    SECURE_SSL_REDIRECT = False if BEHIND_PROXY else True
     SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '31536000'))
     SECURE_HSTS_INCLUDE_SUBDOMAINS = True
     SECURE_HSTS_PRELOAD = True
