@@ -1,6 +1,6 @@
 from django.contrib import admin
 from django.urls import include, path
-from .views import delete, passwords, update, export_credentials, import_credentials
+from .views import delete, passwords, update, export_credentials, import_credentials, purge_credentials
 
 urlpatterns = [
     path('', passwords, name='passwords'),
@@ -8,4 +8,5 @@ urlpatterns = [
     path('delete/<int:id>/', delete, name='delete'),
     path('export/', export_credentials, name='export_credentials'),
     path('import/', import_credentials, name='import_credentials'),
+    path('purge/', purge_credentials, name='purge_credentials'),
 ]

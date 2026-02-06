@@ -330,5 +330,43 @@ def import_credentials(request):
             return JsonResponse({'error': 'Format JSON invalide'}, status=400)
         except Exception as e:
             return JsonResponse({'error': f'Erreur lors de l\'importation: {str(e)}'}, status=500)
-    
+
+    return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
+
+@csrf_exempt
+@otp_required_if_enabled
+def purge_credentials(request):
+    """Supprimer tous les identifiants d'un utilisateur"""
+    if request.method == 'POST':
+        try:
+            # Compter le nombre de credentials avant suppression
+            count = Credentials.objects.filter(user=request.user).count()
+
+            if count == 0:
+                return JsonResponse({
+                    'success': True,
+                    'message': 'Aucun identifiant à supprimer',
+                    'deleted': 0
+                })
+
+            # Supprimer tous les credentials de l'utilisateur
+            deleted_count, _ = Credentials.objects.filter(user=request.user).delete()
+
+            # Logger la purge
+            log_credential_delete(
+                user=request.user,
+                credential_id=0,  # 0 pour indiquer une purge globale
+                name=f'PURGE_ALL ({count} credentials)',
+                ip_address=get_client_ip(request)
+            )
+
+            return JsonResponse({
+                'success': True,
+                'message': f'{deleted_count} identifiant(s) supprimé(s) avec succès',
+                'deleted': deleted_count
+            })
+
+        except Exception as e:
+            return JsonResponse({'error': f'Erreur lors de la suppression: {str(e)}'}, status=500)
+
     return JsonResponse({'error': 'Méthode non autorisée'}, status=405)
