@@ -1,5 +1,6 @@
 class BPasswordAPI {
   constructor() {
+    // Default URL can be HTTP or HTTPS depending on configuration
     this.defaultUrl = 'https://bpassword.b-services.be/api/';
   }
 

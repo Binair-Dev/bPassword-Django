@@ -18,7 +18,8 @@
       <div class="form-group">
         <label for="api-url">URL de l'API</label>
         <input type="url" id="api-url" placeholder="https://bpassword.b-services.be/api">
-        <small>URL de base de l'API bPassword (ex: https://bpassword.b-services.be/api)</small>
+        <small>URL de base de l'API bPassword (ex: https://bpassword.b-services.be/api ou http://localhost:8001/api)</small>
+        <small style="color: var(--warning-color);">Pour BEHIND_PROXY=True, utilisez http:// au lieu de https://</small>
         <small style="color: var(--danger-color);">Ne pas ajouter de slash à la fin</small>
       </div>
       <div class="form-group">

@@ -11,6 +11,7 @@
   ],
   "host_permissions": [
     "https://bpassword.b-services.be/*",
+    "http://bpassword.b-services.be/*",
     "http://localhost:8001/*",
     "https://localhost:8001/*"
   ],
