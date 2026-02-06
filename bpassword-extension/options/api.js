@@ -65,18 +65,18 @@ class BPasswordAPI {
 
   // List credentials (with optional search)
   async listCredentials(query = '') {
-    const endpoint = query ? `/credentials/?q=${encodeURIComponent(query)}` : '/credentials/';
+    const endpoint = query ? `credentials/?q=${encodeURIComponent(query)}` : 'credentials/';
     return this.request(endpoint, { method: 'GET' });
   }
 
   // Get single credential
   async getCredential(id) {
-    return this.request(`/credentials/${id}/`, { method: 'GET' });
+    return this.request(`credentials/${id}/`, { method: 'GET' });
   }
 
   // Create credential
   async createCredential(data) {
-    return this.request('/credentials/', {
+    return this.request('credentials/', {
       method: 'POST',
       body: JSON.stringify(data)
     });
@@ -84,7 +84,7 @@ class BPasswordAPI {
 
   // Update credential
   async updateCredential(id, data) {
-    return this.request(`/credentials/${id}/`, {
+    return this.request(`credentials/${id}/`, {
       method: 'PUT',
       body: JSON.stringify(data)
     });
@@ -92,13 +92,13 @@ class BPasswordAPI {
 
   // Delete credential
   async deleteCredential(id) {
-    return this.request(`/credentials/${id}/`, { method: 'DELETE' });
+    return this.request(`credentials/${id}/`, { method: 'DELETE' });
   }
 
   // Test connection
   async testConnection() {
     try {
-      await this.request('/credentials/', { method: 'GET' });
+      await this.request('credentials/', { method: 'GET' });
       return { success: true, message: 'Connection successful!' };
     } catch (error) {
       return { success: false, message: error.message };
