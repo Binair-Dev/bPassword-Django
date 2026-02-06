@@ -36,7 +36,12 @@ class BPasswordAPI {
     };
 
     try {
-      const response = await fetch(url, { ...options, headers, redirect: 'follow' });
+      const response = await fetch(url, { 
+        ...options, 
+        headers, 
+        redirect: 'follow',
+        cache: 'no-store'  // Évite le cache des redirections 301
+      });
 
       if (!response.ok) {
         if (response.status === 401) {
