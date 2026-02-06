@@ -11,8 +11,26 @@ from django.core import serializers
 
 from .forms import CredentialForm
 from .models import Credentials
+from accounts.audit import (
+    log_credential_access, log_credential_search, log_credential_create,
+    log_credential_update, log_credential_delete, get_client_ip
+)
 
 # Create your views here.
+def _check_password_strength(password):
+    """Vérifie la force d'un mot de passe et retourne True si faible"""
+    if len(password) < 12:
+        return True
+    if not re.search(r'[A-Z]', password):
+        return True
+    if not re.search(r'[a-z]', password):
+        return True
+    if not re.search(r'[0-9]', password):
+        return True
+    if not re.search(r'[!@#$%^&*(),.?":{}|<>]', password):
+        return True
+    return False
+
 def _validate_credential_input(name, username, password):
     """Valide les données d'entrée pour les credentials"""
     errors = []
@@ -64,13 +82,28 @@ def passwords(request):
             if Credentials.objects.filter(user=request.user, name=name, username=username).exists():
                 messages.warning(request, 'Un identifiant avec ce nom et nom d\'utilisateur existe déjà.')
                 return redirect('passwords')
-            
+
+            # Avertissement si mot de passe faible (sans bloquer)
+            if _check_password_strength(password):
+                messages.warning(
+                    request,
+                    'Ce mot de passe est faible. Il devrait contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial pour une meilleure sécurité.'
+                )
+
             credential = Credentials.objects.create(
                 user=request.user,
-                name=name, 
-                username=username, 
+                name=name,
+                username=username,
                 password=password
             )
+
+            # Log la création
+            log_credential_create(
+                user=request.user,
+                name=name,
+                ip_address=get_client_ip(request)
+            )
+
             messages.success(request, f'Identifiant "{name}" ajouté avec succès.')
             return redirect('passwords')
             
@@ -84,24 +117,51 @@ def passwords(request):
         # Limiter la longueur de recherche et valider
         if len(search_query) > 100:
             search_query = search_query[:100]
-        
+
         # Échapper les caractères spéciaux pour éviter les injections
         search_query = re.sub(r'[<>"\'\&]', '', search_query)
-        
+
         credentials = Credentials.objects.filter(
             user=request.user,
             name__icontains=search_query
         )
+
+        # Log la recherche
+        log_credential_search(
+            user=request.user,
+            query=search_query,
+            ip_address=get_client_ip(request),
+            results_count=credentials.count()
+        )
     else:
         credentials = Credentials.objects.filter(user=request.user)
-    
+
+        # Log l'accès à la liste
+        log_credential_access(
+            user=request.user,
+            credential_ids=[cred.id for cred in credentials],
+            ip_address=get_client_ip(request),
+            action='list'
+        )
+
     return render(request, 'passwords.html', {'credentials': credentials})
 
 @otp_required_if_enabled
 def delete(request, id):
     try:
         credential = get_object_or_404(Credentials, id=id, user=request.user)
+        name = credential.name
+        credential_id = credential.id
+
         credential.delete()
+
+        # Log la suppression
+        log_credential_delete(
+            user=request.user,
+            credential_id=credential_id,
+            name=name,
+            ip_address=get_client_ip(request)
+        )
     except Exception as e:
         # TODO: Ajouter logging
         pass
@@ -147,11 +207,28 @@ def update(request, id):
             if duplicate:
                 messages.warning(request, 'Un identifiant avec ce nom et nom d\'utilisateur existe déjà.')
                 return redirect('update', id=credential_id)
-            
+
+            # Avertissement si mot de passe faible (sans bloquer)
+            if _check_password_strength(password):
+                messages.warning(
+                    request,
+                    'Ce mot de passe est faible. Il devrait contenir au moins 12 caractères, une majuscule, une minuscule, un chiffre et un caractère spécial pour une meilleure sécurité.'
+                )
+
+            old_name = credential.name
             credential.name = name
             credential.username = username
             credential.password = password
             credential.save()
+
+            # Log la modification
+            log_credential_update(
+                user=request.user,
+                credential_id=credential.id,
+                name=name,
+                ip_address=get_client_ip(request)
+            )
+
             messages.success(request, f'Identifiant "{name}" mis à jour avec succès.')
             return redirect('passwords')
         

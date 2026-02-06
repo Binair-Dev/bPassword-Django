@@ -8,6 +8,7 @@ from django_otp import user_has_device
 from django_otp.decorators import otp_required
 from .security import LoginSecurityManager
 from .totp import TOTPManager
+from .validators import PasswordComplexityValidator
 import logging
 
 @csrf_protect
@@ -79,33 +80,40 @@ def login_view(request):
 def register_view(request):
     if request.user.is_authenticated:
         return redirect('passwords')
-    
+
     # Bloquer les inscriptions si un utilisateur existe déjà
     if User.objects.exists():
         messages.error(request, 'Les inscriptions sont fermées. Un utilisateur est déjà enregistré.')
         return redirect('login')
-    
+
     if request.method == 'POST':
         username = request.POST.get('username', '').strip()
         password = request.POST.get('password', '')
         password_confirm = request.POST.get('password_confirm', '')
-        
+
         if not all([username, password, password_confirm]):
             messages.error(request, 'Veuillez remplir tous les champs.')
         elif password != password_confirm:
             messages.error(request, 'Les mots de passe ne correspondent pas.')
-        elif len(password) < 8:
-            messages.error(request, 'Le mot de passe doit contenir au moins 8 caractères.')
         elif User.objects.filter(username=username).exists():
             messages.error(request, 'Ce nom d\'utilisateur existe déjà.')
         else:
+            # Validation de complexité du mot de passe
+            validator = PasswordComplexityValidator()
+            try:
+                validator.validate(password)
+            except ValidationError as e:
+                messages.error(request, e.message)
+                return render(request, 'register.html')
+
+            # Création de l'utilisateur
             try:
                 user = User.objects.create_user(username=username, password=password)
                 messages.success(request, 'Compte créé avec succès. Vous pouvez maintenant vous connecter.')
                 return redirect('login')
             except Exception as e:
                 messages.error(request, 'Erreur lors de la création du compte.')
-    
+
     return render(request, 'register.html')
 
 @login_required

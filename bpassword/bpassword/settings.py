@@ -15,6 +15,28 @@ load_dotenv(BASE_DIR.parent / '.env')
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY', 'django-insecure-o7!tlppl)p0ubgjjm$yydh!)uo01ln4)b%$_yzxbv4yd+)us2d')
 
+# HTTPS/TLS Configuration
+ENABLE_HTTPS = os.getenv('ENABLE_HTTPS', 'False').lower() == 'true'
+
+if ENABLE_HTTPS:
+    if DEBUG:
+        import warnings
+        warnings.warn('HTTPS is enabled with DEBUG=True. This is not recommended for production.')
+    SECURE_SSL_REDIRECT = True
+    SECURE_HSTS_SECONDS = int(os.getenv('SECURE_HSTS_SECONDS', '31536000'))
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = True
+    SECURE_HSTS_PRELOAD = True
+    SESSION_COOKIE_SECURE = True
+    CSRF_COOKIE_SECURE = True
+else:
+    # Valeurs par défaut pour développement/proxy
+    SECURE_SSL_REDIRECT = False
+    SECURE_HSTS_SECONDS = 0
+    SECURE_HSTS_INCLUDE_SUBDOMAINS = False
+    SECURE_HSTS_PRELOAD = False
+    SESSION_COOKIE_SECURE = False
+    CSRF_COOKIE_SECURE = False
+
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = os.getenv('DEBUG', 'False').lower() == 'true'
 
@@ -134,10 +156,6 @@ STATIC_ROOT = '/app/staticfiles/'
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 # Sécurité
-SECURE_SSL_REDIRECT = False  # Désactivé pour éviter les redirections infinies avec proxy
-SECURE_HSTS_SECONDS = 0  # Désactivé temporairement
-SECURE_HSTS_INCLUDE_SUBDOMAINS = False
-SECURE_HSTS_PRELOAD = False
 SECURE_CONTENT_TYPE_NOSNIFF = True
 SECURE_BROWSER_XSS_FILTER = True
 X_FRAME_OPTIONS = 'DENY'
@@ -164,7 +182,6 @@ CSP_FRAME_ANCESTORS = ["'none'"]
 CSP_BASE_URI = ["'self'"]
 
 # Session - Sécurisé
-SESSION_COOKIE_SECURE = False  # Désactivé pour éviter problèmes avec proxy
 SESSION_COOKIE_HTTPONLY = True
 SESSION_COOKIE_SAMESITE = 'Strict'  # Sécurisé
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
@@ -172,7 +189,6 @@ SESSION_COOKIE_AGE = 3600  # 1 heure max
 SESSION_SAVE_EVERY_REQUEST = True
 
 # CSRF - Sécurisé
-CSRF_COOKIE_SECURE = False  # Désactivé pour éviter problèmes avec proxy
 CSRF_COOKIE_HTTPONLY = True
 CSRF_COOKIE_SAMESITE = 'Strict'  # Sécurisé
 CSRF_TRUSTED_ORIGINS = [
