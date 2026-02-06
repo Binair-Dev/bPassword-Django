@@ -190,14 +190,14 @@ CSP_BASE_URI = ["'self'"]
 
 # Session - Sécurisé
 SESSION_COOKIE_HTTPONLY = True
-SESSION_COOKIE_SAMESITE = 'Strict'  # Sécurisé
+SESSION_COOKIE_SAMESITE = 'Lax'  # Permet les navigations top-level (évite erreur CSRF après 2FA)
 SESSION_EXPIRE_AT_BROWSER_CLOSE = True
 SESSION_COOKIE_AGE = 3600  # 1 heure max
 SESSION_SAVE_EVERY_REQUEST = True
 
 # CSRF - Sécurisé
 CSRF_COOKIE_HTTPONLY = True
-CSRF_COOKIE_SAMESITE = 'Strict'  # Sécurisé
+CSRF_COOKIE_SAMESITE = 'Lax'  # Permet les navigations top-level (évite erreur CSRF après 2FA)
 CSRF_TRUSTED_ORIGINS = [
     'https://bpassword.b-services.be',
     'https://localhost:8001',
