@@ -178,9 +178,10 @@ STATIC_ROOT = '/app/staticfiles/'
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
-# Pas de trailing slash obligatoire pour l'API REST
-# L'extension et l'app mobile envoient sans slash
-APPEND_SLASH = False
+# APPEND_SLASH remis à True
+# Les patterns dans api/urls.py supportent maintenant les deux formats
+# (avec et sans trailing slash)
+APPEND_SLASH = True
 
 # Sécurité
 SECURE_CONTENT_TYPE_NOSNIFF = True
